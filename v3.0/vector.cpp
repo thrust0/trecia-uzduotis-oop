@@ -2,12 +2,12 @@
 
 class vector {
 private:
-    int size_;
-    double* element_;
-    int space;
+    int size_; //kiek elementu vektoriuje
+    double* element_; //patys tie elementai (tiksliau pointeris i array pradzia)
+    int space_; //kiek atminties uzrezervuota
 
 public:
-    vector() :size_{0} , element_{nullptr}, space{0} {} //default constructor
+    vector() :size_{0} , element_{nullptr}, space_{0} {} //default constructor
 
     vector(int s) //constructor
         : size_{s}, element_{ new double[s] }
@@ -22,7 +22,7 @@ public:
     void set(int n, double v) { element_[n] = v; } //setteris
     
     void reserve(int newalloc); //reservuoti naujos vietos
-    int capacity() const { return space; } //kiek vietos yra funk
+    int capacity() const { return space_; } //kiek vietos yra funk
 
     void push_back(double d);
 
@@ -35,7 +35,7 @@ public:
 
 void vector::reserve(int newalloc)
 {
-    if(newalloc <= space) return; //nesumazint vietos netycia
+    if(newalloc <= space_) return; //nesumazint vietos netycia
 
     double* p = new double[newalloc]; //allocatint naujos vietos
 
@@ -44,7 +44,7 @@ void vector::reserve(int newalloc)
     
     delete[] element_; //istrint sena vectoriu
     element_ = p; //reassigntint pointeri
-    space = newalloc; //max vieta padidejo
+    space_ = newalloc; //max vieta padidejo
 
 }
 
@@ -61,12 +61,12 @@ void vector::resize(int newsize)
 
 void vector::push_back(double d)
 {
-    if(space==0)
+    if(space_==0)
         reserve(8);
-    else if(size_ = space)
-        reserve(2*space);
+    else if(size_ = space_)
+        reserve(2*space_);
     element_[size_] = d;;
-    ++sz;
+    ++size_;
 }
 
 int main()
