@@ -1,5 +1,59 @@
 #include <iostream>
+#include <stdexcept>
+#include <algorithm>
 
+/*
+Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
+
+TODO:
+Constructors & Destructor
+
+Fill constructor (n, val)
+Range constructor (from iterators)
+Copy constructor
+Move constructor
+Initializer list constructor
+
+Element Access
+
+at() (with bounds checking)
+front()
+back()
+data()
+
+Iterators
+
+begin() / end()
+cbegin() / cend()
+rbegin() / rend()
+crbegin() / crend()
+
+Capacity
+
+
+max_size()
+capacity()
+empty()
+resize()
+shrink_to_fit()
+
+Modifiers
+
+pop_back()
+insert()
+erase()
+clear()
+assign()
+emplace()
+emplace_back()
+swap()
+
+Operators
+
+operator= (copy, move, initializer list)
+operator== / operator!=
+operator< / operator<= / operator> / operator>=
+*/
 class vector {
 private:
     int size_; //kiek elementu vektoriuje
@@ -8,8 +62,18 @@ private:
 
 public:
     vector() :size_{0} , element_{nullptr}, space_{0} {} //default constructor
-
-    vector(int s) //constructor
+    vector(const vector& v)
+        :size_(v.size_), element_{new double[v.size_]} 
+        //allocatint memory praeito vectoriaus dydzio ir initicializuoti kopijuojant
+    {
+        std::copy(v.element_, v.element_ + v.size_, element_); 
+    }//copy constructor
+    //copy assignment
+    //move constructor
+    //move assignment
+    ~vector() { delete[] element_; } //destructor
+        
+    explicit vector(int s) //constructor
         : size_{s}, element_{ new double[s] }
         { for(int i=0; i<s; ++i) element_[i] = 0; }
 
@@ -27,9 +91,6 @@ public:
     void push_back(double d);
 
     void resize(int newsize);
-
-    ~vector() //destructor
-        { delete[] element_; }
 
 };
 
@@ -52,6 +113,9 @@ void vector::resize(int newsize)
 {
     reserve(newsize);
 
+    if(newsize < 0)
+        throw std::length_error("vector::resize");
+
     for(int i = size_; i < newsize; i++)
         element_[i] = 0;
     
@@ -61,25 +125,32 @@ void vector::resize(int newsize)
 
 void vector::push_back(double d)
 {
-    if(space_==0)
+    if(space_ == 0)
         reserve(8);
-    else if(size_ = space_)
+    else if(size_ == space_)
         reserve(2*space_);
-    element_[size_] = d;;
+    element_[size_] = d;
     ++size_;
 }
 
 int main()
-{
-    vector v(10);
-    v.resize(-77);
+try{
+    vector v;
+    v.push_back(1);
+    v.push_back(2);
+    v.push_back(3);
 
+    std::cout << "v.size(): " << v.size() << "\n";
     for(int i = 0; i < v.size(); i++)
-    {
-        v[i] = i;
-        std::cout << v[i] << "\n";
-    }
+        std::cout << "v: " <<  v[i] << "\n" ;
+    vector v2 = v;
 
-    std::cout << v.size();
+    std::cout << "v.size(): " << v.size() << "\n";
+    for(int i = 0; i < v2.size(); i++)
+        std::cout << "v2: " << v2[i] << "\n" ;
     return 0;
+}
+catch(std::length_error& e)
+{
+    std::cerr << "error: " << e.what() << "\n";
 }
