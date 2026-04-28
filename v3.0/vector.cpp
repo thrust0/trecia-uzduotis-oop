@@ -10,8 +10,6 @@ Constructors & Destructor
 
 Fill constructor (n, val)
 Range constructor (from iterators)
-Copy constructor
-Move constructor
 Initializer list constructor
 
 Element Access
@@ -50,7 +48,6 @@ swap()
 
 Operators
 
-operator= (copy, move, initializer list)
 operator== / operator!=
 operator< / operator<= / operator> / operator>=
 */
@@ -61,17 +58,12 @@ private:
     int space_; //kiek atminties uzrezervuota
 
 public:
-    vector() :size_{0} , element_{nullptr}, space_{0} {} //default constructor
-    vector(const vector& v)
-        :size_(v.size_), element_{new double[v.size_]} 
-        //allocatint memory praeito vectoriaus dydzio ir initicializuoti kopijuojant
-    {
-        std::copy(v.element_, v.element_ + v.size_, element_); 
-    }//copy constructor
-    //copy assignment
-    //move constructor
-    //move assignment
-    ~vector() { delete[] element_; } //destructor
+    vector() :size_{0} , element_{nullptr},space_{0} {} //default constructor
+    vector(const vector& v);                            //copy constructor
+    vector& operator=(const vector& v);                 //copy assignment
+    vector(vector&& v);                                 //move constructor
+    vector& operator=(vector&& v);                      //move assignment
+    ~vector() { delete[] element_; }                    //destructor
         
     explicit vector(int s) //constructor
         : size_{s}, element_{ new double[s] }
@@ -93,7 +85,41 @@ public:
     void resize(int newsize);
 
 };
+//copy constructor
+vector::vector(const vector& v)
+    :size_(v.size_), element_{new double[v.size_]} 
+        //allocatint memory praeito vectoriaus dydzio ir initicializuoti kopijuojant
+    {
+        std::copy(v.element_, v.element_ + v.size_, element_); 
+    }
 
+//copy assignment
+vector& vector::operator=(const vector& v)
+{
+    double* p = new double[v.size_]; //allocatinam naujos vietos
+    std::copy(v.element_, v.element_ + v.size_, p);
+    delete[] element_; //istrinam "v2" vectoriaus senus elementus
+    element_ = p; //prisikiram jam p elementus
+    size_ = v.size_;
+    return *this;
+}
+//move constructor
+vector::vector(vector&& v)
+    :size_{v.size_}, element_{v.element_}
+{
+    v.size_ = 0;
+    v.element_ = nullptr;
+}
+//move assignment
+vector& vector::operator=(vector&& v)
+{
+    delete[] element_;
+    element_ = v.element_;
+    size_ = v.size_;
+    v.element_ = nullptr;
+    v.size_ = 0;
+    return *this;
+}
 void vector::reserve(int newalloc)
 {
     if(newalloc <= space_) return; //nesumazint vietos netycia
@@ -143,9 +169,11 @@ try{
     std::cout << "v.size(): " << v.size() << "\n";
     for(int i = 0; i < v.size(); i++)
         std::cout << "v: " <<  v[i] << "\n" ;
-    vector v2 = v;
+    vector v2;
 
-    std::cout << "v.size(): " << v.size() << "\n";
+    v2 = v;
+
+    std::cout << "v2.size(): " << v2.size() << "\n";
     for(int i = 0; i < v2.size(); i++)
         std::cout << "v2: " << v2[i] << "\n" ;
     return 0;
