@@ -51,10 +51,11 @@ Operators
 operator== / operator!=
 operator< / operator<= / operator> / operator>=
 */
+template<typename T>
 class vector {
 private:
     int size_; //kiek elementu vektoriuje
-    double* element_; //patys tie elementai (tiksliau pointeris i array pradzia)
+    T* element_; //patys tie elementai (tiksliau pointeris i array prazia)
     int space_; //kiek atminties uzrezervuota
 
 public:
@@ -66,35 +67,37 @@ public:
     ~vector() { delete[] element_; }                    //destructor
         
     explicit vector(int s) //constructor
-        : size_{s}, element_{ new double[s] }
+        : size_{s}, element_{ new T[s] }
         { for(int i=0; i<s; ++i) element_[i] = 0; }
 
     int size() const { return size_; } //current size of vector
 
-    double& operator[] (int n) { return element_[n]; } //operatorius []
-    double operator[] (int n) const { return element_[n]; }; //const versija ant const vektoriu kad pasakytume kad nekeisime su [] operatorium
+    T& operator[] (int n) { return element_[n]; } //operatorius []
+    T operator[] (int n) const { return element_[n]; }; //const versija ant const vektoriu kad pasakytume kad nekeisime su [] operatorium
     
-    double get(int n) const { return element_[n]; } //getteris
-    void set(int n, double v) { element_[n] = v; } //setteris
+    T get(int n) const { return element_[n]; } //getteris
+    void set(int n, T v) { element_[n] = v; } //setteris
     
     void reserve(int newalloc); //reservuoti naujos vietos
     int capacity() const { return space_; } //kiek vietos yra funk
 
-    void push_back(double d);
+    void push_back(T d);
 
     void resize(int newsize);
 
 };
 //copy constructor
-vector::vector(const vector& v)
-    :size_(v.size_), element_{new double[v.size_]} 
+template<typename T>
+vector<T>::vector(const vector& v)
+    :size_(v.size_), element_{new T[v.size_]} 
         //allocatint memory praeito vectoriaus dydzio ir initicializuoti kopijuojant
     {
         std::copy(v.element_, v.element_ + v.size_, element_); 
     }
 
 //copy assignment
-vector& vector::operator=(const vector& v)
+template<typename T>
+vector<T>& vector<T>::operator=(const vector& v)
 {
     if (this==&v) return *this; //self assignment
 
@@ -106,7 +109,7 @@ vector& vector::operator=(const vector& v)
         return *this;
     }
 
-    double* p = new double[v.size_];
+    T* p = new T[v.size_];
     for(int i = 0; i<v.size_; i++)
         p[i] = v.element_[i];
     
@@ -116,14 +119,16 @@ vector& vector::operator=(const vector& v)
     return *this;
 }
 //move constructor
-vector::vector(vector&& v)
+template <typename T>
+vector<T>::vector(vector&& v)
     :size_{v.size_}, element_{v.element_}
 {
     v.size_ = 0;
     v.element_ = nullptr;
 }
 //move assignment
-vector& vector::operator=(vector&& v)
+template <typename T>
+vector<T>& vector<T>::operator=(vector&& v)
 {
     delete[] element_;
     element_ = v.element_;
@@ -132,12 +137,12 @@ vector& vector::operator=(vector&& v)
     v.size_ = 0;
     return *this;
 }
-
-void vector::reserve(int newalloc)
+template <typename T>
+void vector<T>::reserve(int newalloc)
 {
     if(newalloc <= space_) return; //nesumazint vietos netycia
 
-    double* p = new double[newalloc]; //allocatint naujos vietos
+    T* p = new T[newalloc]; //allocatint naujos vietos
 
     for(int i = 0; i<size_; i++) //deep copy
         p[i] = element_[i];
@@ -148,7 +153,8 @@ void vector::reserve(int newalloc)
 
 }
 
-void vector::resize(int newsize)
+template<typename T>
+void vector<T>::resize(int newsize)
 {
     reserve(newsize);
 
@@ -161,8 +167,8 @@ void vector::resize(int newsize)
     size_ = newsize;
 }
 
-
-void vector::push_back(double d)
+template<typename T>
+void vector<T>::push_back(T d)
 {
     if(space_ == 0)
         reserve(8);
@@ -174,7 +180,7 @@ void vector::push_back(double d)
 
 int main()
 try{
-    vector v;
+    vector<int> v;
     v.push_back(1);
     v.push_back(2);
     v.push_back(3);
@@ -182,7 +188,7 @@ try{
     std::cout << "v.size(): " << v.size() << "\n";
     for(int i = 0; i < v.size(); i++)
         std::cout << "v: " <<  v[i] << "\n" ;
-    vector v2;
+    vector<int> v2;
 
     v2 = v;
 
