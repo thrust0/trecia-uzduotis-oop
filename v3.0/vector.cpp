@@ -96,11 +96,23 @@ vector::vector(const vector& v)
 //copy assignment
 vector& vector::operator=(const vector& v)
 {
-    double* p = new double[v.size_]; //allocatinam naujos vietos
-    std::copy(v.element_, v.element_ + v.size_, p);
-    delete[] element_; //istrinam "v2" vectoriaus senus elementus
-    element_ = p; //prisikiram jam p elementus
-    size_ = v.size_;
+    if (this==&v) return *this; //self assignment
+
+    if(v.size_<= space_) //jei nereik allocatint
+    {
+        for(int i = 0; i < v.size_; i++)
+            element_[i] = v.element_[i];
+        size_ = v.size_;
+        return *this;
+    }
+
+    double* p = new double[v.size_];
+    for(int i = 0; i<v.size_; i++)
+        p[i] = v.element_[i];
+    
+    delete[] element_;
+    space_ = size_ = v.size_;
+    element_ = p;
     return *this;
 }
 //move constructor
@@ -120,6 +132,7 @@ vector& vector::operator=(vector&& v)
     v.size_ = 0;
     return *this;
 }
+
 void vector::reserve(int newalloc)
 {
     if(newalloc <= space_) return; //nesumazint vietos netycia
