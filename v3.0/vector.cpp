@@ -55,7 +55,6 @@ operator== / operator!=
 operator< / operator<= / operator> / operator>=
 */
 
-
 template<typename T, typename A = std::allocator<T>>
 class vector {
 private:
@@ -73,7 +72,7 @@ public:
 
     vector(std::initializer_list<T> lst)                    // initilizer list {} constuctor
         :size_{lst.end() - lst.begin()},
-        element_{new double[size_]}
+        element_{new T[size_]}
         { std::copy(lst.begin(), lst.end(), element_); }
 
     vector(const vector<T,A>& v);                            //copy constructor
@@ -148,7 +147,7 @@ vector<T, A>& vector<T, A>::operator=(const vector<T, A>& v)
 //move constructor
 template <typename T, typename A>
 vector<T, A>::vector(vector<T, A>&& v)
-    :size_{v.size_}, element_{v.element_}, alloc_
+    :size_{v.size_}, element_{v.element_}, space_{v.space_}
 {
     v.size_ = 0;
     v.element_ = nullptr;
@@ -157,11 +156,13 @@ vector<T, A>::vector(vector<T, A>&& v)
 template <typename T, typename A>
 vector<T, A>& vector<T, A>::operator=(vector<T, A>&& v)
 {
-    delete[] element_;
-    element_ = v.element_;
-    size_ = v.size_;
-    v.element_ = nullptr;
-    v.size_ = 0;
+    if(this != &v){                 //protection against self assignment
+        delete[] element_;
+        element_ = v.element_;
+        size_ = v.size_;
+        v.element_ = nullptr;
+        v.size_ = 0;
+    }
     return *this;
 }
 
@@ -170,16 +171,12 @@ void vector<T, A>::reserve(int newalloc)
 {
     if(newalloc <= space_) return;                //nesumazint vietos netycia
 
-    T* p = alloc_.allocate(newalloc)            //allocatint naujos vietos
-
-    for(int i = 0; i<size_; i++)                
-        alloc_.construct(&p[i], element_[i]);       //deep copy
-    
-    for(int i = 0; i < size_; i++)
-        alloc_.destroy(&elem[i]);               //istrint sena
-    alloc_.deallocate(element_, space_);
-    element_ = p;                               //reassigntint pointeri
-    space_ = newalloc;                          //max vieta padidejo
+    T* p = alloc_.allocate(newalloc);                    //allocatint naujos vietos
+    std::uninitialized_move(element_, &element_[size_], p); //movint elementus i uninicializuota vieta
+    std::destroy(element_, element_ + space_);
+    alloc_.deallocate(element_, capacity());
+    element_ = p;
+    space_ = newalloc;
 }
 
 template<typename T, typename A>
@@ -187,25 +184,18 @@ void vector<T, A>::resize(int newsize, T val)
 {
     reserve(newsize);
 
-    if(newsize < 0)
-        throw std::length_error("vector::resize");
-
-    for(int i = size_; i < newsize; i++)
-        alloc_.construct(&elem[i], val);
-
-    for(int i = newsize, )
-    
+    if(size_ < newsize)
+        std::uninitialized_fill(&element_[size_], &element_[newsize], val);
+    if(newsize < size_)
+        std::destroy(&element_[newsize], &element_[size_]); 
     size_ = newsize;
 }
 
 template<typename T, typename A>
 void vector<T, A>::push_back(T d)
 {
-    if(space_ == 0)
-        reserve(8);
-    else if(size_ == space_)
-        reserve(2*space_);
-    alloc_.construct(&element_[size_], cal)
+    reserve((space_ == 0) ? 8 : 2*space_);
+    std::construct_at(&element_[size_], d);
     ++size_;
 }
 
