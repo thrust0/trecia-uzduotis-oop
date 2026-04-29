@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <memory>
+#include <initializer_list>
 
 using std::cout;
 /*
@@ -65,15 +66,21 @@ private:
 
 public:
     vector() :size_{0} , element_{nullptr},space_{0} {}      //default constructor
+
+    explicit vector(int s)                                   //constructor
+        : size_{s}, element_{ new T[s] }
+        { for(int i=0; i<s; ++i) element_[i] = 0; }
+
+    vector(std::initializer_list<T> lst)                    // initilizer list {} constuctor
+        :size_{lst.end() - lst.begin()},
+        element_{new double[size_]}
+        { std::copy(lst.begin(), lst.end(), element_); }
+
     vector(const vector<T,A>& v);                            //copy constructor
     vector& operator=(const vector<T, A>&v);                 //copy assignment
     vector(vector<T, A>&& v);                                //move constructor
     vector& operator=(vector<T, A>&& v);                     //move assignment
     ~vector() { delete[] element_; }                         //destructor
-        
-    explicit vector(int s) //constructor
-        : size_{s}, element_{ new T[s] }
-        { for(int i=0; i<s; ++i) element_[i] = 0; }
 
     int size() const { return size_; } //current size of vector
 
