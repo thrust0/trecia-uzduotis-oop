@@ -53,6 +53,8 @@ Operators
 operator== / operator!=
 operator< / operator<= / operator> / operator>=
 */
+
+
 template<typename T, typename A = std::allocator<T>>
 class vector {
 private:
@@ -83,12 +85,27 @@ public:
     
     void reserve(int newalloc); //reservuoti naujos vietos
     int capacity() const { return space_; } //kiek vietos yra funk
-
     void push_back(T d);
+    void resize(int newsize, T val = T());
 
-    void resize(int newsize, T def = T());
-
+    T* begin() const { return element_; }
+    T* end() const { return element_ + size_;}
 };
+template<typename T, typename A>
+bool operator==(const vector<T, A>& v1, const vector<T, A>& v2)
+{
+    if(v1.size() != v2.size())
+        return false;
+    for(int i = 0; i < v1.size(); ++i)
+        if(v1[i] != v2[i])
+            return false;
+    return true;    
+}
+
+template<typename T, typename A>
+bool operator!=(const vector<T, A>& v1, const vector<T, A>& v2)
+{ return !(v1 == v2); }
+
 //copy constructor
 template<typename T, typename A>
 vector<T, A>::vector(const vector<T, A>& v)
@@ -144,21 +161,22 @@ vector<T, A>& vector<T, A>::operator=(vector<T, A>&& v)
 template <typename T, typename A>
 void vector<T, A>::reserve(int newalloc)
 {
-    if(newalloc <= space_) return; //nesumazint vietos netycia
+    if(newalloc <= space_) return;                //nesumazint vietos netycia
 
-    T* p = new T[newalloc]; //allocatint naujos vietos
+    T* p = alloc_.allocate(newalloc)            //allocatint naujos vietos
 
-    for(int i = 0; i<size_; i++) //deep copy
-        p[i] = element_[i];
+    for(int i = 0; i<size_; i++)                
+        alloc_.construct(&p[i], element_[i]);       //deep copy
     
-    delete[] element_; //istrint sena vectoriu
-    element_ = p; //reassigntint pointeri
-    space_ = newalloc; //max vieta padidejo
-
+    for(int i = 0; i < size_; i++)
+        alloc_.destroy(&elem[i]);               //istrint sena
+    alloc_.deallocate(element_, space_);
+    element_ = p;                               //reassigntint pointeri
+    space_ = newalloc;                          //max vieta padidejo
 }
 
 template<typename T, typename A>
-void vector<T, A>::resize(int newsize, T def)
+void vector<T, A>::resize(int newsize, T val)
 {
     reserve(newsize);
 
@@ -166,7 +184,9 @@ void vector<T, A>::resize(int newsize, T def)
         throw std::length_error("vector::resize");
 
     for(int i = size_; i < newsize; i++)
-        element_[i] = def;
+        alloc_.construct(&elem[i], val);
+
+    for(int i = newsize, )
     
     size_ = newsize;
 }
@@ -178,7 +198,7 @@ void vector<T, A>::push_back(T d)
         reserve(8);
     else if(size_ == space_)
         reserve(2*space_);
-    element_[size_] = d;
+    alloc_.construct(&element_[size_], cal)
     ++size_;
 }
 
