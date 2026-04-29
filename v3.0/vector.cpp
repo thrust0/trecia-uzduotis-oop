@@ -1,7 +1,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
+#include <memory>
 
+using std::cout;
 /*
 Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
 
@@ -51,9 +53,10 @@ Operators
 operator== / operator!=
 operator< / operator<= / operator> / operator>=
 */
-template<typename T>
+template<typename T, typename A = std::allocator<T>>
 class vector {
 private:
+    A alloc;
     int size_; //kiek elementu vektoriuje
     T* element_; //patys tie elementai (tiksliau pointeris i array prazia)
     int space_; //kiek atminties uzrezervuota
@@ -83,7 +86,7 @@ public:
 
     void push_back(T d);
 
-    void resize(int newsize);
+    void resize(int newsize, T def = T());
 
 };
 //copy constructor
@@ -154,7 +157,7 @@ void vector<T>::reserve(int newalloc)
 }
 
 template<typename T>
-void vector<T>::resize(int newsize)
+void vector<T>::resize(int newsize, T def)
 {
     reserve(newsize);
 
@@ -162,7 +165,7 @@ void vector<T>::resize(int newsize)
         throw std::length_error("vector::resize");
 
     for(int i = size_; i < newsize; i++)
-        element_[i] = 0;
+        element_[i] = def;
     
     size_ = newsize;
 }
@@ -180,21 +183,17 @@ void vector<T>::push_back(T d)
 
 int main()
 try{
-    vector<int> v;
-    v.push_back(1);
-    v.push_back(2);
-    v.push_back(3);
+    vector<double> v;
+    v.resize(5);
+    cout << "v size: " << v.size() << "\n";
 
-    std::cout << "v.size(): " << v.size() << "\n";
+    v.resize(10, 5.0);
+
+    cout << "v resize size:  " << v.size() << "\n";
+
     for(int i = 0; i < v.size(); i++)
-        std::cout << "v: " <<  v[i] << "\n" ;
-    vector<int> v2;
-
-    v2 = v;
-
-    std::cout << "v2.size(): " << v2.size() << "\n";
-    for(int i = 0; i < v2.size(); i++)
-        std::cout << "v2: " << v2[i] << "\n" ;
+        cout << v[i] << "\n";
+    
     return 0;
 }
 catch(std::length_error& e)
