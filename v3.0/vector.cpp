@@ -56,18 +56,18 @@ operator< / operator<= / operator> / operator>=
 template<typename T, typename A = std::allocator<T>>
 class vector {
 private:
-    A alloc;
+    A alloc_;
     int size_; //kiek elementu vektoriuje
     T* element_; //patys tie elementai (tiksliau pointeris i array prazia)
     int space_; //kiek atminties uzrezervuota
 
 public:
-    vector() :size_{0} , element_{nullptr},space_{0} {} //default constructor
-    vector(const vector& v);                            //copy constructor
-    vector& operator=(const vector& v);                 //copy assignment
-    vector(vector&& v);                                 //move constructor
-    vector& operator=(vector&& v);                      //move assignment
-    ~vector() { delete[] element_; }                    //destructor
+    vector() :size_{0} , element_{nullptr},space_{0} {}      //default constructor
+    vector(const vector<T,A>& v);                            //copy constructor
+    vector& operator=(const vector<T, A>&v);                 //copy assignment
+    vector(vector<T, A>&& v);                                //move constructor
+    vector& operator=(vector<T, A>&& v);                     //move assignment
+    ~vector() { delete[] element_; }                         //destructor
         
     explicit vector(int s) //constructor
         : size_{s}, element_{ new T[s] }
@@ -90,17 +90,17 @@ public:
 
 };
 //copy constructor
-template<typename T>
-vector<T>::vector(const vector& v)
-    :size_(v.size_), element_{new T[v.size_]} 
+template<typename T, typename A>
+vector<T, A>::vector(const vector<T, A>& v)
+    : alloc_(v.alloc_), size_(v.size_), element_{new T[v.size_]}, space_(v.space_) 
         //allocatint memory praeito vectoriaus dydzio ir initicializuoti kopijuojant
     {
-        std::copy(v.element_, v.element_ + v.size_, element_); 
+            std::copy(v.element_, v.element_ + v.size_, element_); 
     }
 
 //copy assignment
-template<typename T>
-vector<T>& vector<T>::operator=(const vector& v)
+template<typename T, typename A>
+vector<T, A>& vector<T, A>::operator=(const vector<T, A>& v)
 {
     if (this==&v) return *this; //self assignment
 
@@ -122,16 +122,16 @@ vector<T>& vector<T>::operator=(const vector& v)
     return *this;
 }
 //move constructor
-template <typename T>
-vector<T>::vector(vector&& v)
-    :size_{v.size_}, element_{v.element_}
+template <typename T, typename A>
+vector<T, A>::vector(vector<T, A>&& v)
+    :size_{v.size_}, element_{v.element_}, alloc_
 {
     v.size_ = 0;
     v.element_ = nullptr;
 }
 //move assignment
-template <typename T>
-vector<T>& vector<T>::operator=(vector&& v)
+template <typename T, typename A>
+vector<T, A>& vector<T, A>::operator=(vector<T, A>&& v)
 {
     delete[] element_;
     element_ = v.element_;
@@ -140,8 +140,9 @@ vector<T>& vector<T>::operator=(vector&& v)
     v.size_ = 0;
     return *this;
 }
-template <typename T>
-void vector<T>::reserve(int newalloc)
+
+template <typename T, typename A>
+void vector<T, A>::reserve(int newalloc)
 {
     if(newalloc <= space_) return; //nesumazint vietos netycia
 
@@ -156,8 +157,8 @@ void vector<T>::reserve(int newalloc)
 
 }
 
-template<typename T>
-void vector<T>::resize(int newsize, T def)
+template<typename T, typename A>
+void vector<T, A>::resize(int newsize, T def)
 {
     reserve(newsize);
 
@@ -170,8 +171,8 @@ void vector<T>::resize(int newsize, T def)
     size_ = newsize;
 }
 
-template<typename T>
-void vector<T>::push_back(T d)
+template<typename T, typename A>
+void vector<T, A>::push_back(T d)
 {
     if(space_ == 0)
         reserve(8);
