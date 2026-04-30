@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <iterator>
 
+
 using std::cout;
 /*
 Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
@@ -24,7 +25,6 @@ shrink_to_fit()
 
 Modifiers
 
-pop_back()
 insert()
 erase()
 assign()
@@ -249,7 +249,15 @@ vector<T>::iterator vector<T>::erase(iterator p)
 {
     if(p == end())
         return p;
-    std::move(p+1, r.size_ )
+    std::move(p+1, end(), p) //move elements from p+1, until end() to p
+    --size_;
+    return p;
+}
+
+template<typename T>
+vector<T>::iterator vector<T>::insert(iterator p, const T& val)
+{
+    
 }
 
 int main()
