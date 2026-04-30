@@ -21,7 +21,6 @@ Modifiers
 assign()
 emplace()
 emplace_back()
-swap()
 
 Operators
 
@@ -59,6 +58,8 @@ public:
         :size_{static_cast<int>(lst.size())},
         element_{new T[size_]}
         { std::copy(lst.begin(), lst.end(), element_); }
+
+    template<typename InputIt> vector(InputIt first, InputIt last);    //range constructor
 
     vector(const vector<T>& v);                              //copy constructor
     vector& operator=(const vector<T>&v);                    //copy assignment
@@ -301,6 +302,14 @@ void vector<T>::swap(vector& other) noexcept
     std::swap(space_, other.space_);
     std::swap(size_, other.size_);
 }
+
+template<typename T>
+template<typename InputIt>
+vector<T>::vector(InputIt first, InputIt last) 
+    : size_{ static_cast<int>(std::distance(first, last)) },
+    space_{size_},
+    element_{ new T[size_] }
+{ std::copy(first, last, element_); }
 
 int main()
 try{
