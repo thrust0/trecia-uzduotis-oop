@@ -140,6 +140,24 @@ template<typename T>
 bool operator!=(const vector<T>& v1, const vector<T>& v2)
 { return !(v1 == v2); }
 
+template<typename T>
+bool operator<(const vector<T>& v1, const vector<T>& v2)
+{
+    return std::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end());
+}
+
+template<typename T>
+bool operator<=(const vector<T>& v1, const vector<T>& v2)
+{ return !(v2 < v1); }
+
+template<typename T>
+bool operator>(const vector<T>& v1, const vector<T>& v2)
+{ return v2 < v1; }
+
+template<typename T>
+bool operator>=(const vector<T>& v1, const vector<T>& v2)
+{ return !(v1 < v2); }
+
 //copy constructor
 template<typename T>
 vector<T>::vector(const vector<T>& v)
