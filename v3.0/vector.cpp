@@ -106,7 +106,11 @@ public:
     void resize(int newsize, T val = T());
 
     T* begin() const { return element_; }                   //pradzios iteratorius
+    const T* cbegin() const { return element_; }            //const pradzios iteratorius
+
+    
     T* end() const { return element_ + size_;}              //galo iteratorius
+    const T* cend() const { return element_ + size_; }      //const galo iteratorius
 };
 template<typename T>
 bool operator==(const vector<T>& v1, const vector<T>& v2)
