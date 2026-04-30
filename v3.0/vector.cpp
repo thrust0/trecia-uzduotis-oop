@@ -118,6 +118,8 @@ public:
 
     T* data() { return element_; }                          //public access to element_
     const T* data() const { return element_; }              //const public access to element_
+
+    void shrink_to_fit();                                   //sumazint space_ = size_
 };
 
 template<typename T>
@@ -194,7 +196,7 @@ void vector<T>::reserve(int newalloc)
 {
     if (newalloc<=space_)                // never decrease allocation
         return;
-    T* p = new double[newalloc];        // allocate new space
+    T* p = new T[newalloc];        // allocate new space
     for (int i=0; i<size_; ++i)            // copy old elements
         p[i] = element_[i];
     delete[] element_;                      // deallocate old space
@@ -279,6 +281,18 @@ vector<T>::iterator vector<T>::insert(iterator p, const T& val)
     *(begin() + index) = val;
     size_++;
     return p;
+}
+
+template<typename T>
+void vector<T>::shrink_to_fit()
+{
+    if(size_ == space_)
+        return;
+    T* p = new T[size_];
+    std::move(begin(), end(), p);
+    delete[] element_;
+    element_ = p;
+    space_ = size_;
 }
 
 int main()
