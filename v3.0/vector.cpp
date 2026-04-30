@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <initializer_list>
 #include <iterator>
+#include <utility>
 
 
 using std::cout;
@@ -13,10 +14,6 @@ TODO:
 Constructors & Destructor
 
 range constructor (from iterators)
-
-Element Access
-
-data()
 
 Capacity
 
@@ -94,7 +91,8 @@ public:
     
     void reserve(int newalloc);                             //reservuoti naujos vietos
     size_type capacity() const { return space_; }           //kiek vietos yra funk
-    void push_back(T d);                                    //idet elementa T i gala vektorius ir jei ka allocatint mem
+    void push_back(const T& val);                                    //idet elementa T i gala vektorius ir jei ka allocatint mem
+    void push_back(T&& val);
     void resize(int newsize, T val = T());                  //pakeist didy vectoriaus, jei neduodamas value tai sukonstruos su default konstrukt.
 
     void pop_back();                                        //remove last element of container
@@ -215,13 +213,24 @@ void vector<T>::resize(int newsize, T val)
 }
 
 template<typename T>
-void vector<T>::push_back(T d)
+void vector<T>::push_back(const T& val)
 {
     if(space_ == 0)
         reserve(8);
-    else if(size_ ==space_)
+    else if(size_ == space_)
         reserve(2*space_);
     element_[size_] = d;
+    size_++;
+}
+
+template<typename T>
+void vector<T>::push_back(T&& val)
+{
+    if(space_ == 0)
+        reserve(8);
+    else if(size_ == space_)
+        reserve(2*space_);
+    element_[size_] = std::move(val);
     size_++;
 }
 
