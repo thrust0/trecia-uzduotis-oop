@@ -13,7 +13,6 @@ Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
 TODO:
 Modifiers
 
-assign()
 emplace()
 emplace_back()
 
@@ -134,6 +133,8 @@ bool operator==(const vector<T>& v1, const vector<T>& v2)
             return false;
     return true;    
 }
+
+
 
 template<typename T>
 bool operator!=(const vector<T>& v1, const vector<T>& v2)
