@@ -257,7 +257,14 @@ vector<T>::iterator vector<T>::erase(iterator p)
 template<typename T>
 vector<T>::iterator vector<T>::insert(iterator p, const T& val)
 {
-    
+    int index = p-begin();         //jeigu reserve pakeistu vektoriaus vieta atmintyje
+    if(size() == capacity())
+        reserve(size() == 0?8:2*size());  
+    p = begin() + index;          //uzdet p kur pries tai buvo relative to vector index
+    std::move_backward(p, end(), end() + 1);
+    *(begin() + index) = val;
+    size_++;
+    return p;
 }
 
 int main()
