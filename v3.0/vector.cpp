@@ -16,15 +16,13 @@ Modifiers
 emplace()
 emplace_back()
 
-Operators
-
-operator< / operator<= / operator> / operator>=
-
 TESTS for all functions
 Documentation
 */
 
 template<typename T>
+/// Paprastas vektoriaus konteineris, imituoja std::vector
+/// @tparam T elementu tipas
 class vector {
 private:
     int size_;                              //kiek elementu vektoriuje
@@ -36,8 +34,12 @@ public:
     using value_type = T;
     using iterator = T*;
     using const_iterator = const T*;
-    vector() :size_{0} , element_{nullptr},space_{0} {}      //default constructor
+    /// Numatinis konstruktorius
+    vector() :size_{0} , element_{nullptr},space_{0} {}
 
+    /// Konstruktuoja vektoriu su pradiniu dydziu
+    /// @param s pradinis elementu skaicius
+    /// @throws std::length_error jei s < 0
     explicit vector(int s)                                   //constructor
         : size_{s}, element_{ new T[s] }
         { 
@@ -47,79 +49,141 @@ public:
                 element_[i] = T{}; 
         }
 
+    /// Konstrukcija is initializer_list
+    /// @param lst sarasas elementu
     vector(std::initializer_list<T> lst)                    // initilizer list {} constuctor
         :size_{static_cast<int>(lst.size())},
         element_{new T[size_]}
         { std::copy(lst.begin(), lst.end(), element_); }
 
+    /// Range constructor: sukuria vektoriu kopijuojant intervala [first, last)
     template<typename InputIt> vector(InputIt first, InputIt last);    //range constructor
 
+    /// Copy constructor
+    /// @param v kitas vector
     vector(const vector<T>& v);                              //copy constructor
+
+    /// Copy assignment operator
+    /// @param v kitas vector
+    /// @return reference i this
     vector& operator=(const vector<T>&v);                    //copy assignment
+
+    /// Move constructor
+    /// @param v movable vector
     vector(vector<T>&& v);                                   //move constructor
+
+    /// Move assignment
+    /// @param v movable vector
+    /// @return reference i this
     vector& operator=(vector<T>&& v);                        //move assignment
+
+    /// Destruktorius, atlaisvina dinamine atmintyje saugoma masyva
     ~vector() { delete[] element_; }                         //destructor
 
+    /// Grazina vektoriaus dydzi (kiek elementu yra)
+    /// @return elementu skaicius
     size_type size() const { return size_; }                 //current size of vector
+
+    /// Griztina maksimalu galima dydzio skaiciu (apytiksliai)
     int max_size() const { return INT_MAX / sizeof(T); }     //max size
 
+    /// Nepatikrintas indekso operatorius
+    /// @param n indekso pozicija
+    /// @return reference i elementa
     T& operator[] (int n) { return element_[n]; }                   //operatorius []
-    const T& operator[] (int n) const { return element_[n]; };     //const versija ant const vektoriu kad pasakytume kad nekeisime su [] operatorium
+    /// Nepatikrintas indekso operatorius (const versija)
+    const T& operator[] (int n) const { return element_[n]; };     //const versija ant const vektoriu
 
+    /// Tikrintas prieigos metodas, metamas out_of_range jei uz ribu
+    /// @param n indeksas
+    /// @return reference i elementa
     T& at(int n);                                           //checked access            
     const T& at(int n) const;                               //const checked access
     
+    /// Grazina pirma elemento reference
     T& front() { return element_[0]; }                      //return first element reference
     const T& front() const { return element_[0]; }          //const version
 
+    /// Grazina paskutinio elemento reference
     T& back() { return element_[size_ - 1]; }               //return last element reference
     const T& back() const { return element_[size_ - 1]; }   //const version
 
+    /// Patikrina ar vektorius tuscias
+    /// @return true jei tuscias
     bool empty() const { return begin() == end(); }         //check if container empty
 
+    /// Getteris (kopija) elemento
     T get(int n) const { return element_[n]; }              //getteris
+    /// Setteris elemento
     void set(int n, T val) { element_[n] = val; }           //setteris
     
+    /// Rezervuoja atminties vieta be elemento inicializacijos
+    /// @param newalloc naujas rezervuotas elementu kiekis
     void reserve(int newalloc);                             //reservuoti naujos vietos
-    size_type capacity() const { return space_; }           //kiek vietos yra funk
-    void push_back(const T& val);                           //idet elementa T i gala vektorius ir jei ka allocatint mem
-    void push_back(T&& val);
-    void resize(int newsize, T val = T());                  //pakeist didy vectoriaus, jei neduodamas value tai sukonstruos su default konstrukt.
 
+    /// Grazina kapaciteta (kiek vietos uzrezervuota)
+    size_type capacity() const { return space_; }           //kiek vietos yra funk
+
+    /// Prideda elementa i pabaiga (lvalue)
+    /// @param val elementas
+    void push_back(const T& val);                           //idet elementa T i gala vektorius
+    /// Prideda elementa i pabaiga (rvalue)
+    void push_back(T&& val);
+
+    /// Pakeicia vektoriaus dydzio reiksme, jei reikia inicializuoja naujus elementus
+    /// @param newsize naujas dydis
+    /// @param val reiksme naujiems elementams
+    void resize(int newsize, T val = T());                  //pakeist didy vectoriaus
+
+    /// Pasalina paskutini elementa
     void pop_back();                                        //remove last element of container
 
+    /// Grazina iteratoriu i pradzia
     iterator begin() { return element_; }                   //pradzios iteratorius
     const_iterator cbegin() const { return element_; }      //const pradzios iteratorius
 
     iterator rbegin(){ return std::reverse_iterator<iterator>(begin()); }
     const_iterator crbegin() const { return std::reverse_iterator<const_iterator>(cbegin()); }
     
+    /// Grazina iteratoriu i pabaiga
     iterator end() { return element_ + size_;}              //galo iteratorius
     const_iterator cend() const { return element_ + size_; }//const galo iteratorius
     
     iterator rend() { return std::reverse_iterator<iterator>(end()); } //reverse iterator
     const_iterator crend() const { return std::reverse_iterator<const_iterator>(cend()); }
 
+    /// Iteratoriaus i pozicija p istrynimas
+    /// @param p iteratorius i istrinama elementa
+    /// @return iteratorius i elementa po istrynimo
     iterator insert(iterator p, const T& val);
     iterator erase(iterator p);
 
-    void clear() { size_ = 0; }                             //allocated space still belongs to the container but cant access with at()
+    /// Istrina visus elementus (neatlaisvina atminties)
+    void clear() { size_ = 0; }                             //allocated space still belongs to the container
 
+    /// Uzpildo vektoriaus pirma n elementu reiksme
     void assign(size_type count, const T& val);
 
+    /// Grazina rodykle i vidini duomenu masyva
     T* data() { return element_; }                          //public access to element_
     const T* data() const { return element_; }              //const public access to element_
 
+    /// Sumazina rezervuota vieta iki dydzio
     void shrink_to_fit();                                   //sumazint space_ = size_
     
+    /// Apkeicia su kitu vector'iumi
     void swap(vector& other) noexcept;
     
+    /// In-place konstravimas paskutinio elemento
     template<typename... Args>
-    void emplace_back(Args&&... Args);
+    void emplace_back(Args&&... args);
 
+    /// Uzpildo vektoriu n elementu su val
     void assign(size_type n, const T& val);                 //fill assign
+    /// Uzpildo vektoriu intervale [first,last)
     template<typename InputIt>
     void assign(InputIt first, InputIt last);               //range assign
+    /// Uzpildo vektoriu is initializer list
     void assign(std::initializer_list<T> ilist);            //initializer list assign
 };
 
@@ -359,6 +423,18 @@ void vector<T>::assign(std::initializer_list<T> ilist)
     if(size_ > space_)
         reserve(size_);
     std::copy(ilist.begin(), ilist.end(), element_);
+}
+template<typename T>
+template<typename... Args>
+void vector<T>::emplace_back(Args&&... args)
+{
+    if(space_ == 0)
+        reserve(8);
+    else if(size_ == space_)
+        reserve(2*space_);
+
+    new(&element_[size_]) T(std::forward<Args>(args)... );
+    ++size_;
 }
 
 int main()
