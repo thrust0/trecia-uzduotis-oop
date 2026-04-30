@@ -83,7 +83,7 @@ public:
     
     void reserve(int newalloc);                             //reservuoti naujos vietos
     size_type capacity() const { return space_; }           //kiek vietos yra funk
-    void push_back(const T& val);                                    //idet elementa T i gala vektorius ir jei ka allocatint mem
+    void push_back(const T& val);                           //idet elementa T i gala vektorius ir jei ka allocatint mem
     void push_back(T&& val);
     void resize(int newsize, T val = T());                  //pakeist didy vectoriaus, jei neduodamas value tai sukonstruos su default konstrukt.
 
@@ -331,6 +331,15 @@ void vector<T>::assign(InputIt first, InputIt last)
     if(distance > space_)
         reserve(distance);
     std::copy(first, last, element_);
+}
+
+template<typename T>
+void vector<T>::assign(std::initializer_list<T> ilist)
+{
+    size_ = ilist.size();
+    if(size_ > space_)
+        reserve(size_);
+    std::copy(ilist.begin(), ilist.end(), element_);
 }
 
 int main()
