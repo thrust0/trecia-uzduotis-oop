@@ -49,6 +49,10 @@ private:
     int space_;                             //kiek atminties uzrezervuota
 
 public:
+    using size_type = int;
+    using value_type = T;
+    using iterator = T*;
+    using const_iterator = const T*;
     vector() :size_{0} , element_{nullptr},space_{0} {}      //default constructor
 
     explicit vector(int s)                                   //constructor
@@ -71,7 +75,7 @@ public:
     vector& operator=(vector<T>&& v);                        //move assignment
     ~vector() { delete[] element_; }                         //destructor
 
-    int size() const { return size_; }                       //current size of vector
+    size_type size() const { return size_; }                       //current size of vector
     int max_size() const { return INT_MAX / sizeof(T); }     //max size
 
     T& operator[] (int n) { return element_[n]; }                   //operatorius []
@@ -90,21 +94,21 @@ public:
     void set(int n, T val) { element_[n] = val; }           //setteris
     
     void reserve(int newalloc);                             //reservuoti naujos vietos
-    int capacity() const { return space_; }                 //kiek vietos yra funk
+    size_type capacity() const { return space_; }                 //kiek vietos yra funk
     void push_back(T d);
     void resize(int newsize, T val = T());
 
-    T* begin() const { return element_; }                   //pradzios iteratorius
-    const T* cbegin() const { return element_; }            //const pradzios iteratorius
+    iterator begin() { return element_; }                   //pradzios iteratorius
+    const_iterator cbegin() const { return element_; }            //const pradzios iteratorius
 
-    T* rbegin() const { return std::reverse_iterator(begin()); }
-    const T* crbegin() const { return std::reverse_iterator(cbegin()); }
+    iterator rbegin(){ return std::reverse_iterator(begin()); }
+    const_iterator crbegin() const { return std::reverse_iterator(cbegin()); }
     
-    T* end() const { return element_ + size_;}              //galo iteratorius
-    const T* cend() const { return element_ + size_; }      //const galo iteratorius
+    iterator end() { return element_ + size_;}              //galo iteratorius
+    const_iterator cend() const { return element_ + size_; }      //const galo iteratorius
     
-    T* rend() const { return std::reverse_iterator(end()); } //reverse iterator
-    const T* crend() const { return std::reverse_iterator(cend()); }
+    iterator rend() { return std::reverse_iterator(end()); } //reverse iterator
+    const_iterator crend() const { return std::reverse_iterator(cend()); }
 };
 
 template<typename T>
