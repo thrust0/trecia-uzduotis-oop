@@ -1,8 +1,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
-#include <memory>
 #include <initializer_list>
+#include <iterator>
 
 using std::cout;
 /*
@@ -11,27 +11,15 @@ Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
 TODO:
 Constructors & Destructor
 
-Fill constructor (n, val)
+
 Range constructor (from iterators)
-Initializer list constructor
 
 Element Access
 
-front()
-back()
 data()
-
-Iterators
-
-cbegin() / cend()
-rbegin() / rend()
-crbegin() / crend()
 
 Capacity
 
-
-max_size()
-capacity()
 empty()
 resize()
 shrink_to_fit()
@@ -56,9 +44,9 @@ operator< / operator<= / operator> / operator>=
 template<typename T>
 class vector {
 private:
-    int size_; //kiek elementu vektoriuje
-    T* element_; //patys tie elementai (tiksliau pointeris i array prazia)
-    int space_; //kiek atminties uzrezervuota
+    int size_;                              //kiek elementu vektoriuje
+    T* element_;                            //patys tie elementai (tiksliau pointeris i array prazia)
+    int space_;                             //kiek atminties uzrezervuota
 
 public:
     vector() :size_{0} , element_{nullptr},space_{0} {}      //default constructor
@@ -84,6 +72,7 @@ public:
     ~vector() { delete[] element_; }                         //destructor
 
     int size() const { return size_; }                       //current size of vector
+    int max_size() const { return INT_MAX / sizeof(T); }     //max size
 
     T& operator[] (int n) { return element_[n]; }                   //operatorius []
     const T& operator[] (int n) const { return element_[n]; };     //const versija ant const vektoriu kad pasakytume kad nekeisime su [] operatorium
@@ -108,10 +97,16 @@ public:
     T* begin() const { return element_; }                   //pradzios iteratorius
     const T* cbegin() const { return element_; }            //const pradzios iteratorius
 
+    T* rbegin() const { return std::reverse_iterator(begin()); }
+    const T* crbegin() const { return std::reverse_iterator(cbegin()); }
     
     T* end() const { return element_ + size_;}              //galo iteratorius
     const T* cend() const { return element_ + size_; }      //const galo iteratorius
+    
+    T* rend() const { return std::reverse_iterator(end()); } //reverse iterator
+    const T* crend() const { return std::reverse_iterator(cend()); }
 };
+
 template<typename T>
 bool operator==(const vector<T>& v1, const vector<T>& v2)
 {
