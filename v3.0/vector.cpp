@@ -12,8 +12,7 @@ Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
 TODO:
 Constructors & Destructor
 
-
-Range constructor (from iterators)
+range constructor (from iterators)
 
 Element Access
 
@@ -25,8 +24,6 @@ shrink_to_fit()
 
 Modifiers
 
-insert()
-erase()
 assign()
 emplace()
 emplace_back()
@@ -36,6 +33,9 @@ Operators
 
 
 operator< / operator<= / operator> / operator>=
+
+TESTS for all functions
+Documentation
 */
 
 template<typename T>
@@ -115,6 +115,11 @@ public:
     iterator erase(iterator p);
 
     void clear() { size_ = 0; }                             //allocated space still belongs to the container but cant access with at()
+
+    void assign(size_type count, const T& val);
+
+    T* data() { return element_; }                          //public access to element_
+    const T* data() const { return element_; }              //const public access to element_
 };
 
 template<typename T>
