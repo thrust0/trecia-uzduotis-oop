@@ -11,11 +11,6 @@ using std::cout;
 Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
 
 TODO:
-Constructors & Destructor
-
-range constructor (from iterators)
-
-
 Modifiers
 
 assign()
@@ -23,7 +18,6 @@ emplace()
 emplace_back()
 
 Operators
-
 
 operator< / operator<= / operator> / operator>=
 
@@ -120,6 +114,14 @@ public:
     void shrink_to_fit();                                   //sumazint space_ = size_
     
     void swap(vector& other) noexcept;
+    
+    template<typename... Args>
+    void emplace_back(Args&&... Args);
+
+    void assign(size_type n, const T& val);                 //fill assign
+    template<typename InputIt>
+    void assign(InputIt first, InputIt last);               //range assign
+    void assign(std::initializer_list<T> ilist);            //initializer list assign
 };
 
 template<typename T>
@@ -310,6 +312,16 @@ vector<T>::vector(InputIt first, InputIt last)
     space_{size_},
     element_{ new T[size_] }
 { std::copy(first, last, element_); }
+
+template<typename T>
+void vector<T>::assign(size_type n, const T& val)
+{
+    if(n > space_)
+        reserve(n);
+    for(int i = 0; i < n; i++)
+        element_[i] = val;
+    size_ = n;
+}
 
 int main()
 try{
