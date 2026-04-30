@@ -323,6 +323,16 @@ void vector<T>::assign(size_type n, const T& val)
     size_ = n;
 }
 
+template<typename T>
+template<typename InputIt>
+void vector<T>::assign(InputIt first, InputIt last)
+{
+    size_ = static_cast<int>(std::distance(first, last));
+    if(distance > space_)
+        reserve(distance);
+    std::copy(first, last, element_);
+}
+
 int main()
 try{
     vector<double> v = { 1, 2, 3 ,4 ,5};
