@@ -15,9 +15,6 @@ Constructors & Destructor
 
 range constructor (from iterators)
 
-Capacity
-
-shrink_to_fit()
 
 Modifiers
 
@@ -100,14 +97,14 @@ public:
     iterator begin() { return element_; }                   //pradzios iteratorius
     const_iterator cbegin() const { return element_; }      //const pradzios iteratorius
 
-    iterator rbegin(){ return std::reverse_iterator(begin()); }
-    const_iterator crbegin() const { return std::reverse_iterator(cbegin()); }
+    iterator rbegin(){ return std::reverse_iterator<iterator>(begin()); }
+    const_iterator crbegin() const { return std::reverse_iterator<const_iterator>(cbegin()); }
     
     iterator end() { return element_ + size_;}              //galo iteratorius
-    const_iterator cend() const { return element_ + size_; }      //const galo iteratorius
+    const_iterator cend() const { return element_ + size_; }//const galo iteratorius
     
-    iterator rend() { return std::reverse_iterator(end()); } //reverse iterator
-    const_iterator crend() const { return std::reverse_iterator(cend()); }
+    iterator rend() { return std::reverse_iterator<iterator>(end()); } //reverse iterator
+    const_iterator crend() const { return std::reverse_iterator<const_iterator>(cend()); }
 
     iterator insert(iterator p, const T& val);
     iterator erase(iterator p);
@@ -120,6 +117,8 @@ public:
     const T* data() const { return element_; }              //const public access to element_
 
     void shrink_to_fit();                                   //sumazint space_ = size_
+    
+    void swap(vector& other) noexcept;
 };
 
 template<typename T>
@@ -221,7 +220,7 @@ void vector<T>::push_back(const T& val)
         reserve(8);
     else if(size_ == space_)
         reserve(2*space_);
-    element_[size_] = d;
+    element_[size_] = val;
     size_++;
 }
 
@@ -261,17 +260,17 @@ const T& vector<T>::at(int n) const
 }
 
 template<typename T>
-vector<T>::iterator vector<T>::erase(iterator p)
+typename vector<T>::iterator vector<T>::erase(iterator p)
 {
     if(p == end())
         return p;
-    std::move(p+1, end(), p) //move elements from p+1, until end() to p
+    std::move(p+1, end(), p); //move elements from p+1, until end() to p
     --size_;
     return p;
 }
 
 template<typename T>
-vector<T>::iterator vector<T>::insert(iterator p, const T& val)
+typename vector<T>::iterator vector<T>::insert(iterator p, const T& val)
 {
     int index = p-begin();         //jeigu reserve pakeistu vektoriaus vieta atmintyje
     if(size() == capacity())
@@ -293,6 +292,14 @@ void vector<T>::shrink_to_fit()
     delete[] element_;
     element_ = p;
     space_ = size_;
+}
+
+template<typename T>
+void vector<T>::swap(vector& other) noexcept
+{
+    std::swap(element_, other.element_);
+    std::swap(space_, other.space_);
+    std::swap(size_, other.size_);
 }
 
 int main()
