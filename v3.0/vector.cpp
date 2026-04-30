@@ -20,7 +20,6 @@ data()
 
 Capacity
 
-empty()
 shrink_to_fit()
 
 Modifiers
@@ -28,7 +27,6 @@ Modifiers
 pop_back()
 insert()
 erase()
-clear()
 assign()
 emplace()
 emplace_back()
@@ -68,13 +66,13 @@ public:
         element_{new T[size_]}
         { std::copy(lst.begin(), lst.end(), element_); }
 
-    vector(const vector<T>& v);                                  //copy constructor
-    vector& operator=(const vector<T>&v);                       //copy assignment
-    vector(vector<T>&& v);                                     //move constructor
-    vector& operator=(vector<T>&& v);                         //move assignment
+    vector(const vector<T>& v);                              //copy constructor
+    vector& operator=(const vector<T>&v);                    //copy assignment
+    vector(vector<T>&& v);                                   //move constructor
+    vector& operator=(vector<T>&& v);                        //move assignment
     ~vector() { delete[] element_; }                         //destructor
 
-    size_type size() const { return size_; }                       //current size of vector
+    size_type size() const { return size_; }                 //current size of vector
     int max_size() const { return INT_MAX / sizeof(T); }     //max size
 
     T& operator[] (int n) { return element_[n]; }                   //operatorius []
@@ -90,15 +88,16 @@ public:
     const T& back() const { return element_[size_ - 1]; }   //const version
 
     bool empty() const { return begin() == end(); }         //check if container empty
-    
 
     T get(int n) const { return element_[n]; }              //getteris
     void set(int n, T val) { element_[n] = val; }           //setteris
     
     void reserve(int newalloc);                             //reservuoti naujos vietos
     size_type capacity() const { return space_; }           //kiek vietos yra funk
-    void push_back(T d);
-    void resize(int newsize, T val = T());
+    void push_back(T d);                                    //idet elementa T i gala vektorius ir jei ka allocatint mem
+    void resize(int newsize, T val = T());                  //pakeist didy vectoriaus, jei neduodamas value tai sukonstruos su default konstrukt.
+
+    void pop_back();                                        //remove last element of container
 
     iterator begin() { return element_; }                   //pradzios iteratorius
     const_iterator cbegin() const { return element_; }      //const pradzios iteratorius
@@ -114,6 +113,8 @@ public:
 
     iterator insert(iterator p, const T& val);
     iterator erase(iterator p);
+
+    void clear() { size_ = 0; }                             //allocated space still belongs to the container but cant access with at()
 };
 
 template<typename T>
@@ -217,6 +218,14 @@ void vector<T>::push_back(T d)
         reserve(2*space_);
     element_[size_] = d;
     size_++;
+}
+
+template<typename T>
+void vector<T>::pop_back()
+{
+    if(size_ == 0)
+        throw std::out_of_range("used pop_back() on empty vector!");
+    size_--;
 }
 
 template<typename T>
