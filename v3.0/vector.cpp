@@ -17,14 +17,12 @@ Initializer list constructor
 
 Element Access
 
-at() (with bounds checking)
 front()
 back()
 data()
 
 Iterators
 
-begin() / end()
 cbegin() / cend()
 rbegin() / rend()
 crbegin() / crend()
@@ -51,14 +49,13 @@ swap()
 
 Operators
 
-operator== / operator!=
+
 operator< / operator<= / operator> / operator>=
 */
 
-template<typename T, typename A = std::allocator<T>>
+template<typename T>
 class vector {
 private:
-    A alloc_;
     int size_; //kiek elementu vektoriuje
     T* element_; //patys tie elementai (tiksliau pointeris i array prazia)
     int space_; //kiek atminties uzrezervuota
@@ -68,37 +65,51 @@ public:
 
     explicit vector(int s)                                   //constructor
         : size_{s}, element_{ new T[s] }
-        { for(int i=0; i<s; ++i) element_[i] = 0; }
+        { 
+            if(s < 0)
+                throw std::length_error("size cannot be < 0 for a vector");
+            for(int i=0; i<s; ++i) 
+                element_[i] = T{}; 
+        }
 
     vector(std::initializer_list<T> lst)                    // initilizer list {} constuctor
-        :size_{lst.end() - lst.begin()},
+        :size_{static_cast<int>(lst.size())},
         element_{new T[size_]}
         { std::copy(lst.begin(), lst.end(), element_); }
 
-    vector(const vector<T,A>& v);                            //copy constructor
-    vector& operator=(const vector<T, A>&v);                 //copy assignment
-    vector(vector<T, A>&& v);                                //move constructor
-    vector& operator=(vector<T, A>&& v);                     //move assignment
+    vector(const vector<T>& v);                              //copy constructor
+    vector& operator=(const vector<T>&v);                    //copy assignment
+    vector(vector<T>&& v);                                   //move constructor
+    vector& operator=(vector<T>&& v);                        //move assignment
     ~vector() { delete[] element_; }                         //destructor
 
-    int size() const { return size_; } //current size of vector
+    int size() const { return size_; }                       //current size of vector
 
-    T& operator[] (int n) { return element_[n]; } //operatorius []
-    T operator[] (int n) const { return element_[n]; }; //const versija ant const vektoriu kad pasakytume kad nekeisime su [] operatorium
+    T& operator[] (int n) { return element_[n]; }                   //operatorius []
+    const T& operator[] (int n) const { return element_[n]; };     //const versija ant const vektoriu kad pasakytume kad nekeisime su [] operatorium
+
+    T& at(int n);                                           //checked access            
+    const T& at(int n) const;                               //const checked access
     
-    T get(int n) const { return element_[n]; } //getteris
-    void set(int n, T v) { element_[n] = v; } //setteris
+    T& front() { return element_[0]; }                      //return first element reference
+    const T& front() const { return element[0]; }           //const version
+
+    T& back() { return element_[size_]; }                   //return last element reference
+    const T& back() const { return element_[size_]; }       //const version
+
+    T get(int n) const { return element_[n]; }              //getteris
+    void set(int n, T val) { element_[n] = val; }           //setteris
     
-    void reserve(int newalloc); //reservuoti naujos vietos
-    int capacity() const { return space_; } //kiek vietos yra funk
+    void reserve(int newalloc);                             //reservuoti naujos vietos
+    int capacity() const { return space_; }                 //kiek vietos yra funk
     void push_back(T d);
     void resize(int newsize, T val = T());
 
-    T* begin() const { return element_; }
-    T* end() const { return element_ + size_;}
+    T* begin() const { return element_; }                   //pradzios iteratorius
+    T* end() const { return element_ + size_;}              //galo iteratorius
 };
-template<typename T, typename A>
-bool operator==(const vector<T, A>& v1, const vector<T, A>& v2)
+template<typename T>
+bool operator==(const vector<T>& v1, const vector<T>& v2)
 {
     if(v1.size() != v2.size())
         return false;
@@ -108,22 +119,22 @@ bool operator==(const vector<T, A>& v1, const vector<T, A>& v2)
     return true;    
 }
 
-template<typename T, typename A>
-bool operator!=(const vector<T, A>& v1, const vector<T, A>& v2)
+template<typename T>
+bool operator!=(const vector<T>& v1, const vector<T>& v2)
 { return !(v1 == v2); }
 
 //copy constructor
-template<typename T, typename A>
-vector<T, A>::vector(const vector<T, A>& v)
-    : alloc_(v.alloc_), size_(v.size_), element_{new T[v.size_]}, space_(v.space_) 
+template<typename T>
+vector<T>::vector(const vector<T>& v)
+    : size_(v.size_), element_{new T[v.size_]}, space_(v.space_) 
         //allocatint memory praeito vectoriaus dydzio ir initicializuoti kopijuojant
     {
             std::copy(v.element_, v.element_ + v.size_, element_); 
     }
 
 //copy assignment
-template<typename T, typename A>
-vector<T, A>& vector<T, A>::operator=(const vector<T, A>& v)
+template<typename T>
+vector<T>& vector<T>::operator=(const vector<T>& v)
 {
     if (this==&v) return *this; //self assignment
 
@@ -145,16 +156,16 @@ vector<T, A>& vector<T, A>::operator=(const vector<T, A>& v)
     return *this;
 }
 //move constructor
-template <typename T, typename A>
-vector<T, A>::vector(vector<T, A>&& v)
+template <typename T>
+vector<T>::vector(vector<T>&& v)
     :size_{v.size_}, element_{v.element_}, space_{v.space_}
 {
     v.size_ = 0;
     v.element_ = nullptr;
 }
 //move assignment
-template <typename T, typename A>
-vector<T, A>& vector<T, A>::operator=(vector<T, A>&& v)
+template <typename T>
+vector<T>& vector<T>::operator=(vector<T>&& v)
 {
     if(this != &v){                 //protection against self assignment
         delete[] element_;
@@ -166,55 +177,75 @@ vector<T, A>& vector<T, A>::operator=(vector<T, A>&& v)
     return *this;
 }
 
-template <typename T, typename A>
-void vector<T, A>::reserve(int newalloc)
+template <typename T>
+void vector<T>::reserve(int newalloc)
 {
-    if(newalloc <= space_) return;                //nesumazint vietos netycia
-
-    T* p = alloc_.allocate(newalloc);                    //allocatint naujos vietos
-    std::uninitialized_move(element_, &element_[size_], p); //movint elementus i uninicializuota vieta
-    std::destroy(element_, element_ + space_);
-    alloc_.deallocate(element_, capacity());
+    if (newalloc<=space_)                // never decrease allocation
+        return;
+    T* p = new double[newalloc];        // allocate new space
+    for (int i=0; i<size_; ++i)            // copy old elements
+        p[i] = element_[i];
+    delete[] element_;                      // deallocate old space
     element_ = p;
     space_ = newalloc;
 }
 
-template<typename T, typename A>
-void vector<T, A>::resize(int newsize, T val)
+template<typename T>
+void vector<T>::resize(int newsize, T val)
 {
     reserve(newsize);
 
-    if(size_ < newsize)
-        std::uninitialized_fill(&element_[size_], &element_[newsize], val);
-    if(newsize < size_)
-        std::destroy(&element_[newsize], &element_[size_]); 
+    for(int i = size_; i < newsize; i++)
+        element_[i] = val;
     size_ = newsize;
 }
 
-template<typename T, typename A>
-void vector<T, A>::push_back(T d)
+template<typename T>
+void vector<T>::push_back(T d)
 {
-    reserve((space_ == 0) ? 8 : 2*space_);
-    std::construct_at(&element_[size_], d);
-    ++size_;
+    if(space_ == 0)
+        reserve(8);
+    else if(size_ ==space_)
+        reserve(2*space_);
+    element_[size_] = d;
+    size_++;
+}
+
+template<typename T>
+T& vector<T>::at(int n)
+{
+    if (n<0 || size_<= n)
+        throw std::out_of_range("vector::at accessed element out of range");
+    return element_[n];
+}
+
+template<typename T>
+const T& vector<T>::at(int n) const
+{
+    if (n<0 || size_<= n)
+        throw std::out_of_range("vector::at accessed element out of range");
+    return element_[n];
 }
 
 int main()
 try{
-    vector<double> v;
-    v.resize(5);
+    vector<double> v = { 1, 2, 3 ,4 ,5};
     cout << "v size: " << v.size() << "\n";
 
-    v.resize(10, 5.0);
-
-    cout << "v resize size:  " << v.size() << "\n";
-
+    v.push_back(6);
+    cout << "v size: " << v.size() << "\n";
     for(int i = 0; i < v.size(); i++)
-        cout << v[i] << "\n";
+        cout << v.at(i) << "\n";
+
+    
     
     return 0;
 }
 catch(std::length_error& e)
+{
+    std::cerr << "error: " << e.what() << "\n";
+}
+catch(std::out_of_range& e)
 {
     std::cerr << "error: " << e.what() << "\n";
 }
