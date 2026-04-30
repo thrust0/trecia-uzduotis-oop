@@ -92,10 +92,10 @@ public:
     const T& at(int n) const;                               //const checked access
     
     T& front() { return element_[0]; }                      //return first element reference
-    const T& front() const { return element[0]; }           //const version
+    const T& front() const { return element_[0]; }           //const version
 
-    T& back() { return element_[size_]; }                   //return last element reference
-    const T& back() const { return element_[size_]; }       //const version
+    T& back() { return element_[size_ - 1]; }                   //return last element reference
+    const T& back() const { return element_[size_ - 1]; }       //const version
 
     T get(int n) const { return element_[n]; }              //getteris
     void set(int n, T val) { element_[n] = val; }           //setteris
@@ -237,7 +237,7 @@ try{
     for(int i = 0; i < v.size(); i++)
         cout << v.at(i) << "\n";
 
-    
+    cout << v.front() << " " << v.back() << std::endl;
     
     return 0;
 }
