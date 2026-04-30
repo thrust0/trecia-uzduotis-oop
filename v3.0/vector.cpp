@@ -21,7 +21,6 @@ data()
 Capacity
 
 empty()
-resize()
 shrink_to_fit()
 
 Modifiers
@@ -69,10 +68,10 @@ public:
         element_{new T[size_]}
         { std::copy(lst.begin(), lst.end(), element_); }
 
-    vector(const vector<T>& v);                              //copy constructor
-    vector& operator=(const vector<T>&v);                    //copy assignment
-    vector(vector<T>&& v);                                   //move constructor
-    vector& operator=(vector<T>&& v);                        //move assignment
+    vector(const vector<T>& v);                                  //copy constructor
+    vector& operator=(const vector<T>&v);                       //copy assignment
+    vector(vector<T>&& v);                                     //move constructor
+    vector& operator=(vector<T>&& v);                         //move assignment
     ~vector() { delete[] element_; }                         //destructor
 
     size_type size() const { return size_; }                       //current size of vector
@@ -85,21 +84,24 @@ public:
     const T& at(int n) const;                               //const checked access
     
     T& front() { return element_[0]; }                      //return first element reference
-    const T& front() const { return element_[0]; }           //const version
+    const T& front() const { return element_[0]; }          //const version
 
-    T& back() { return element_[size_ - 1]; }                   //return last element reference
-    const T& back() const { return element_[size_ - 1]; }       //const version
+    T& back() { return element_[size_ - 1]; }               //return last element reference
+    const T& back() const { return element_[size_ - 1]; }   //const version
+
+    bool empty() const { return begin() == end(); }         //check if container empty
+    
 
     T get(int n) const { return element_[n]; }              //getteris
     void set(int n, T val) { element_[n] = val; }           //setteris
     
     void reserve(int newalloc);                             //reservuoti naujos vietos
-    size_type capacity() const { return space_; }                 //kiek vietos yra funk
+    size_type capacity() const { return space_; }           //kiek vietos yra funk
     void push_back(T d);
     void resize(int newsize, T val = T());
 
     iterator begin() { return element_; }                   //pradzios iteratorius
-    const_iterator cbegin() const { return element_; }            //const pradzios iteratorius
+    const_iterator cbegin() const { return element_; }      //const pradzios iteratorius
 
     iterator rbegin(){ return std::reverse_iterator(begin()); }
     const_iterator crbegin() const { return std::reverse_iterator(cbegin()); }
@@ -109,6 +111,9 @@ public:
     
     iterator rend() { return std::reverse_iterator(end()); } //reverse iterator
     const_iterator crend() const { return std::reverse_iterator(cend()); }
+
+    iterator insert(iterator p, const T& val);
+    iterator erase(iterator p);
 };
 
 template<typename T>
@@ -228,6 +233,14 @@ const T& vector<T>::at(int n) const
     if (n<0 || size_<= n)
         throw std::out_of_range("vector::at accessed element out of range");
     return element_[n];
+}
+
+template<typename T>
+vector<T>::iterator vector<T>::erase(iterator p)
+{
+    if(p == end())
+        return p;
+    std::move(p+1, r.size_ )
 }
 
 int main()
