@@ -14,7 +14,6 @@ TODO:
 Modifiers
 
 emplace()
-emplace_back()
 
 TESTS for all functions
 Documentation
@@ -177,6 +176,9 @@ public:
     /// In-place konstravimas paskutinio elemento
     template<typename... Args>
     void emplace_back(Args&&... args);
+
+    template<typename... Args>
+    iterator emplace(iterator pos, Args&&... args); 
 
     /// Uzpildo vektoriu n elementu su val
     void assign(size_type n, const T& val);                 //fill assign
@@ -424,6 +426,7 @@ void vector<T>::assign(std::initializer_list<T> ilist)
         reserve(size_);
     std::copy(ilist.begin(), ilist.end(), element_);
 }
+
 template<typename T>
 template<typename... Args>
 void vector<T>::emplace_back(Args&&... args)
@@ -435,6 +438,20 @@ void vector<T>::emplace_back(Args&&... args)
 
     new(&element_[size_]) T(std::forward<Args>(args)... );
     ++size_;
+}
+
+template<typename T>
+template<typename... Args>
+typename vector<T>::iterator vector<T>::emplace(iterator pos, Args&&... args)
+{
+    int index = pos - begin();
+    if(size() == capacity())
+        reserve(size() == 0?8:2*size());  
+    pos = begin() + index;          //uzdet p kur pries tai buvo relative to vector index
+    std::move_backward(pos, end(), end() + 1);
+    new(&*pos) T(std::forward<Args>(args)... );
+    size_++;
+    return pos;
 }
 
 int main()
