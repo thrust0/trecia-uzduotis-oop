@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
@@ -5,20 +7,15 @@
 #include <iterator>
 #include <utility>
 
-
-using std::cout;
 /*
 Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
 
 TODO:
-Modifiers
-
-emplace()
 
 TESTS for all functions
 Documentation
 */
-
+namespace my{
 template<typename T>
 /// Paprastas vektoriaus konteineris, imituoja std::vector
 /// @tparam T elementu tipas
@@ -33,7 +30,7 @@ public:
     using value_type = T;
     using iterator = T*;
     using const_iterator = const T*;
-    /// Numatinis konstruktorius
+    /// default konstruktorius
     vector() :size_{0} , element_{nullptr},space_{0} {}
 
     /// Konstruktuoja vektoriu su pradiniu dydziu
@@ -161,7 +158,7 @@ public:
     void clear() { size_ = 0; }                             //allocated space still belongs to the container
 
     /// Uzpildo vektoriaus pirma n elementu reiksme
-    void assign(size_type count, const T& val);
+    
 
     /// Grazina rodykle i vidini duomenu masyva
     T* data() { return element_; }                          //public access to element_
@@ -453,26 +450,4 @@ typename vector<T>::iterator vector<T>::emplace(iterator pos, Args&&... args)
     size_++;
     return pos;
 }
-
-int main()
-try{
-    vector<double> v = { 1, 2, 3 ,4 ,5};
-    cout << "v size: " << v.size() << "\n";
-
-    v.push_back(6);
-    cout << "v size: " << v.size() << "\n";
-    for(int i = 0; i < v.size(); i++)
-        cout << v.at(i) << "\n";
-
-    cout << v.front() << " " << v.back() << std::endl;
-    
-    return 0;
-}
-catch(std::length_error& e)
-{
-    std::cerr << "error: " << e.what() << "\n";
-}
-catch(std::out_of_range& e)
-{
-    std::cerr << "error: " << e.what() << "\n";
 }
