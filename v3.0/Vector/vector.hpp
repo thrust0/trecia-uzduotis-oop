@@ -22,8 +22,8 @@ template<typename T>
 class vector {
 private:
     int size_;                              //kiek elementu vektoriuje
-    T* element_;                            //patys tie elementai (tiksliau pointeris i array prazia)
     int space_;                             //kiek atminties uzrezervuota
+    T* element_;                            //patys tie elementai (tiksliau pointeris i array prazia)
 
 public:
     using size_type = int;
@@ -31,13 +31,13 @@ public:
     using iterator = T*;
     using const_iterator = const T*;
     /// default konstruktorius
-    vector() :size_{0} , element_{nullptr},space_{0} {}
+    vector() :size_{0} ,space_{0}, element_{nullptr} {}
 
     /// Konstruktuoja vektoriu su pradiniu dydziu
     /// @param s pradinis elementu skaicius
     /// @throws std::length_error jei s < 0
     explicit vector(int s)                                   //constructor
-        : size_{s}, element_{ new T[s] }
+        : size_{s}, space_{s}, element_{ new T[s] }
         { 
             if(s < 0)
                 throw std::length_error("size cannot be < 0 for a vector");
@@ -49,11 +49,16 @@ public:
     /// @param lst sarasas elementu
     vector(std::initializer_list<T> lst)                    // initilizer list {} constuctor
         :size_{static_cast<int>(lst.size())},
+        space_{static_cast<int>(lst.size())},
         element_{new T[size_]}
         { std::copy(lst.begin(), lst.end(), element_); }
 
     /// Range constructor: sukuria vektoriu kopijuojant intervala [first, last)
-    template<typename InputIt> vector(InputIt first, InputIt last);    //range constructor
+    template<typename InputIt> vector(InputIt first, InputIt last)
+        : size_{ static_cast<int>(std::distance(first, last)) },
+        space_{ static_cast<int>(std::distance(first, last)) }, 
+        element_{ new T[size_] }
+        { std::copy(first, last, element_); }    //range constructor
 
     /// Copy constructor
     /// @param v kitas vector
@@ -136,17 +141,19 @@ public:
 
     /// Grazina iteratoriu i pradzia
     iterator begin() { return element_; }                   //pradzios iteratorius
-    const_iterator cbegin() const { return element_; }      //const pradzios iteratorius
+    const_iterator begin() const { return element_; }
+    const_iterator cbegin() const noexcept { return element_; }      //const pradzios iteratorius
 
-    iterator rbegin(){ return std::reverse_iterator<iterator>(begin()); }
-    const_iterator crbegin() const { return std::reverse_iterator<const_iterator>(cbegin()); }
+    std::reverse_iterator<iterator> rbegin(){ return std::reverse_iterator<iterator>(end()); }
+    std::reverse_iterator<const_iterator> crbegin() const { return std::reverse_iterator<const_iterator>(cend()); }
     
     /// Grazina iteratoriu i pabaiga
     iterator end() { return element_ + size_;}              //galo iteratorius
-    const_iterator cend() const { return element_ + size_; }//const galo iteratorius
+    const_iterator end() const { return element_ + size_; }
+    const_iterator cend() const noexcept { return element_ + size_; }//const galo iteratorius
     
-    iterator rend() { return std::reverse_iterator<iterator>(end()); } //reverse iterator
-    const_iterator crend() const { return std::reverse_iterator<const_iterator>(cend()); }
+    std::reverse_iterator<iterator> rend() { return std::reverse_iterator<iterator>(begin()); } //reverse iterator
+    std::reverse_iterator<const_iterator> crend() const { return std::reverse_iterator<const_iterator>(cbegin()); }
 
     /// Iteratoriaus i pozicija p istrynimas
     /// @param p iteratorius i istrinama elementa
@@ -224,7 +231,7 @@ bool operator>=(const vector<T>& v1, const vector<T>& v2)
 //copy constructor
 template<typename T>
 vector<T>::vector(const vector<T>& v)
-    : size_(v.size_), element_{new T[v.size_]}, space_(v.space_) 
+    : size_(v.size_), space_(v.space_), element_{new T[v.size_]}
         //allocatint memory praeito vectoriaus dydzio ir initicializuoti kopijuojant
     {
             std::copy(v.element_, v.element_ + v.size_, element_); 
@@ -256,7 +263,7 @@ vector<T>& vector<T>::operator=(const vector<T>& v)
 //move constructor
 template <typename T>
 vector<T>::vector(vector<T>&& v)
-    :size_{v.size_}, element_{v.element_}, space_{v.space_}
+    :size_{v.size_}, space_{v.space_}, element_{v.element_}
 {
     v.size_ = 0;
     v.element_ = nullptr;
@@ -388,14 +395,6 @@ void vector<T>::swap(vector& other) noexcept
 }
 
 template<typename T>
-template<typename InputIt>
-vector<T>::vector(InputIt first, InputIt last) 
-    : size_{ static_cast<int>(std::distance(first, last)) },
-    space_{size_},
-    element_{ new T[size_] }
-{ std::copy(first, last, element_); }
-
-template<typename T>
 void vector<T>::assign(size_type n, const T& val)
 {
     if(n > space_)
@@ -409,19 +408,22 @@ template<typename T>
 template<typename InputIt>
 void vector<T>::assign(InputIt first, InputIt last)
 {
-    size_ = static_cast<int>(std::distance(first, last));
-    if(distance > space_)
-        reserve(distance);
+    int n = static_cast<int>(std::distance(first, last));
+    if(n > space_)
+        reserve(n);
     std::copy(first, last, element_);
+    size_ = n;
 }
 
 template<typename T>
 void vector<T>::assign(std::initializer_list<T> ilist)
 {
-    size_ = ilist.size();
-    if(size_ > space_)
-        reserve(size_);
+
+    int n = ilist.size();
+    if(n > space_)
+        reserve(n);
     std::copy(ilist.begin(), ilist.end(), element_);
+    size_ = n;
 }
 
 template<typename T>

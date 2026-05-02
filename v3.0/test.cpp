@@ -3,17 +3,17 @@
 #include <gtest/gtest.h>
 #include "Vector/vector.hpp"
 #include <list>
-
+//
 /** Vienetiniai testai Students klasei. Kiekvienas testas tikrina viena elgsena. */
 
 
 /// Default Constructor Test
 TEST(Student, default_constructor)
 {
-    Students s;
-    EXPECT_EQ(s.first_name(), "");
-    EXPECT_EQ(s.last_name(), "");
-    EXPECT_EQ(s.exam(), 0);
+    Students ss;
+    EXPECT_EQ(ss.first_name(), "");
+    EXPECT_EQ(ss.last_name(), "");
+    EXPECT_EQ(ss.exam(), 0);
 }
 
 /// Copy Constructor 
@@ -316,8 +316,8 @@ TEST(myVector, AssignFill)
     v.assign(3, 1);
     EXPECT_EQ(v.size(), 3);
     EXPECT_EQ(v[0], 1);
+    EXPECT_EQ(v[1], 1);
     EXPECT_EQ(v[2], 1);
-    EXPECT_EQ(v[3], 1);
 }
 
 TEST(myVector, AssignRange)
@@ -506,12 +506,25 @@ TEST(myVector, insert)
 
 TEST(myVector, emplace)
 {
+    my::vector<string> v = { "hello", "world"};
+    auto pos = std::next(v.begin());
 
+    v.emplace(pos, "there");
+    EXPECT_EQ(v.size(), 3);
+    EXPECT_EQ(v.at(0), "hello");
+    EXPECT_EQ(v.at(1), "there");
+    EXPECT_EQ(v.at(2), "world");
 }
 
 TEST(myVector, emplace_back)
 {
+    my::vector<string> v;
+    v.emplace_back("hello");
+    v.emplace_back("world");
 
+    EXPECT_EQ(v.size(), 2);
+    EXPECT_EQ(v.at(0), "hello");
+    EXPECT_EQ(v.at(1), "world");
 }
 
 TEST(myVector, erase)
@@ -575,27 +588,48 @@ TEST(myVector, notEqualOperator)
 
 TEST(myVector, lessThanOperator) // operator<
 {
+    my::vector<int> v1 = {1, 2, 3};
+    my::vector<int> v2 = {1, 2, 4};
+    my::vector<int> v3 = {1, 2, 3};
+    my::vector<int> v4 = {1, 2, 3, 4};
 
+    EXPECT_TRUE(v1 < v2);    // first difference 3 < 4
+    EXPECT_FALSE(v2 < v1);   // opposite
+    EXPECT_FALSE(v1 < v3);   // equal vectors
+    EXPECT_TRUE(v1 < v4);    // shorter vector is less
 }
 
 TEST(myVector, lessThanOrEqualOperator) // operator <=
 {
+    my::vector<int> v1 = {1, 2, 3};
+    my::vector<int> v2 = {1, 2, 4};
+    my::vector<int> v3 = {1, 2, 3};
 
+    EXPECT_TRUE(v1 <= v2);   // less than
+    EXPECT_TRUE(v1 <= v3);   // equal
+    EXPECT_FALSE(v2 <= v1);  // greater
 }
 
 TEST(myVector, moreThanOperator) //operator>
 {
+    my::vector<int> v1 = {1, 2, 4};
+    my::vector<int> v2 = {1, 2, 3};
+    my::vector<int> v3 = {1, 2, 4};
 
+    EXPECT_TRUE(v1 > v2);    // greater
+    EXPECT_FALSE(v2 > v1);   // less
+    EXPECT_FALSE(v1 > v3);   // equal
 }
 
 TEST(myVector, moreThanOrEqualOperator) //operator>=
 {
+    my::vector<int> v1 = {1, 2, 4};
+    my::vector<int> v2 = {1, 2, 3};
+    my::vector<int> v3 = {1, 2, 4};
 
-}
-
-TEST(myVector, lessThanOrEqualOperator)
-{
-
+    EXPECT_TRUE(v1 >= v2);   // greater
+    EXPECT_TRUE(v1 >= v3);   // equal
+    EXPECT_FALSE(v2 >= v1);  // less
 }
 
 TEST(myVector, pushBackCopy)
@@ -614,13 +648,9 @@ TEST(myVector, pushBackMove)
     v.push_back(std::move(s));
     EXPECT_EQ(v.size(), 1);
     EXPECT_EQ(v.at(0), "hello");
-    EXPECT_EQ(s, s.empty());
+    EXPECT_EQ(s, "");
 }
 
-TEST(myVector, lessThanOrEqualOperator)
-{
-
-}
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
