@@ -4,4 +4,5 @@
 int main()
 {
     my::vector<int> v;
+    return 0;
 }

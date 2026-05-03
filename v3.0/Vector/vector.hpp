@@ -12,7 +12,7 @@ Atkuriamas STL std::vector tam kad ismokt kurt savo konteineri
 
 TODO:
 
-TESTS for all functions
+
 Documentation
 */
 namespace my{
