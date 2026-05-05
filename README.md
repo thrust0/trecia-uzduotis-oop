@@ -205,7 +205,7 @@ Visi penki metodai atnaujinti, kad teisingai dirbtų su bazine klase:
 * **Destruktorius** — valo tik `Students` laukus, `Zmogus` destruktorius valo `first_name_`, `last_name_`
 
 
-## v2.0 pakeitimai
+## v2.0 Pakeitimai
 
 
 - Pridėti Unit testai naudojant Google Test framework'ą
@@ -216,9 +216,72 @@ Visi penki metodai atnaujinti, kad teisingai dirbtų su bazine klase:
 - Pridėta Doxygen dokumentacija HTML ir PDF formatais
 - Programa automatiškai sukuria išvesties katalogą jei jo nėra (`std::filesystem`)
 - Sutvarkyta repozicija
-# v1.1 testavimas 
 
-## Struct vs Class spartos palyginimas
+## v3.0 Pakeitimai
+
+### Nuosavas Vector konteineris
+Sukurtas nuosavas `my::vector<T>` konteineris, kuris padengia daugiau nei 80% `std::vector` funkcijų. Konteineris realizuotas su šablonais (templates) ir patalpintas atskirame `vector.hpp` faile su `my` vardų erdve (namespace). Pilnai dar nėra implementuoti visi insert() variantai.
+
+Realizuotos funkcijos:
+- Konstruktoriai: numatytasis, dydžio, kopijos, perkėlimo, inicializavimo sąrašo, diapazono
+- Elementų prieiga: `operator[]`, `at()`, `front()`, `back()`, `data()`
+- Talpa: `size()`, `capacity()`, `empty()`, `reserve()`, `shrink_to_fit()`, `max_size()`
+- Modifikatoriai: `push_back()`, `pop_back()`, `insert()`, `erase()`, `clear()`, `resize()`, `swap()`, `assign()`, `emplace()`, `emplace_back()`
+- Iteratoriai: `begin()`, `end()`, `cbegin()`, `cend()`, `rbegin()`, `rend()`, `crbegin()`, `crend()`
+- Operatoriai: `==`, `!=`, `<`, `<=`, `>`, `>=`
+
+### Funkcijų pavyzdžiai
+
+#### 1. `push_back()`
+Prideda elementą į vektoriaus galą.
+```cpp
+my::vector v = {1, 2, 3};
+v.push_back(4);
+// v = {1, 2, 3, 4}
+// v.size() = 4
+```
+
+#### 2. `insert()`
+Įterpia elementą į nurodytą poziciją.
+```cpp
+my::vector v = {1, 2, 3};
+v.insert(v.begin() + 1, 99);
+// v = {1, 99, 2, 3}
+// v.size() = 4
+```
+
+#### 3. `erase()`
+Pašalina elementą iš nurodytos pozicijos.
+```cpp
+my::vector v = {1, 2, 3, 4, 5};
+v.erase(v.begin() + 2);
+// v = {1, 2, 4, 5}
+// v.size() = 4
+```
+
+#### 4. `operator<`
+Lygina du vektorius leksikografiškai.
+```cpp
+my::vector v1 = {1, 2, 3};
+my::vector v2 = {1, 2, 4};
+bool result = v1 < v2;
+// result = true, nes pirmasis skirtumas: 3 < 4
+```
+
+#### 5. `emplace_back()`
+Konstruoja elementą tiesiogiai vektoriaus gale.
+```cpp
+my::vector v;
+v.emplace_back("labas");
+v.emplace_back("pasauli");
+// v = {"labas", "pasauli"}
+// v.size() = 2
+```
+
+# Testavimas
+## v1.1 testavimas 
+
+### Struct vs Class spartos palyginimas
 
 Visi laikai milisekundėmis (ms). Naudotas vector konteineris, 1 strategija.
 
@@ -296,7 +359,7 @@ laukų, o tai sukelia papildomą funkcijų iškvietimo išlaidą (function call 
 Nuskaitymo ir skaidymo laikai yra panašūs abiejose versijose, todėl pagrindinis
 našumo skirtumas slypi rūšiavimo operacijoje su getter metodais.
 
-## Kompiliatoriaus flag'ų testavimas su class
+### Kompiliatoriaus flag'ų testavimas su class
 
 ### O1 flag
 
@@ -370,7 +433,7 @@ našumo skirtumas slypi rūšiavimo operacijoje su getter metodais.
 | Test 5   | 1054.06     | 124.67     | 29.36     | 1208.09 |
 | Vidurkis | 1054.53     | 124.41     | 29.28     | 1208.22 |
 
-## Kompiliatoriaus flag'ų testavimas su vector ir struct
+### Kompiliatoriaus flag'ų testavimas su vector ir struct
 
 ### O1 flag
 
@@ -443,7 +506,7 @@ našumo skirtumas slypi rūšiavimo operacijoje su getter metodais.
 | Vidurkis | 1053.736    | 39.2934    | 16.8837   | 1109.910 |
 ---
 
-## Kompiliatoriaus optimizavimo flagų palyginimas (vidurkiai ms.)
+### Kompiliatoriaus optimizavimo flagų palyginimas (vidurkiai ms.)
 
 ### 100k įrašų
 
@@ -508,7 +571,7 @@ Optimizavimo flagai turi labai didelę įtaką programos veikimo greičiui:
   šiek tiek padidėja (pvz., struct versijoje iki ~136 KB), nes aukštesnio lygio
   optimizacijos gali generuoti papildomą kodą siekiant maksimalaus našumo.
   
-# v1.2 testavimas
+## v1.2 testavimas
 
 Visi klasės metodai patikrinti `test.cpp` faile naudojant `assert` funkcijas:
 
@@ -525,7 +588,7 @@ Visi klasės metodai patikrinti `test.cpp` faile naudojant `assert` funkcijas:
 
 ![Test Photo](https://github.com/thrust0/antra-uzduotis-oop/blob/v1.2/testavimas/antrastest.png)
 
-# v1.5 testavimas
+## v1.5 testavimas
 
 
 Visi klasės metodai patikrinti `test.cpp` faile naudojant `assert` funkcijas:
@@ -543,7 +606,7 @@ Visi klasės metodai patikrinti `test.cpp` faile naudojant `assert` funkcijas:
 
 ![Test Photo](https://github.com/thrust0/antra-uzduotis-oop/blob/v1.5/testavimas/v1.5%20testavimas/testrun.png)
 
-# v2.0 testavimas
+## v2.0 testavimas
 
 Visi klasės metodai patikrinti `test.cpp` faile naudojant **Google Test** framework'ą:
 
@@ -567,3 +630,40 @@ Visi klasės metodai patikrinti `test.cpp` faile naudojant **Google Test** frame
 | `operator<<` | ✓ |
 
 ![Test photo](https://github.com/thrust0/antra-uzduotis-oop/blob/v2.0/testavimas/v2testavimas.png)
+
+## v3.0 testavimas
+
+### Spartos analizė: push_back()
+
+| Size        | Runs | avg `std::vector` (s) | avg `my::vector` (s) | Ratio (my / std) | 
+|-------------|------|-----------------------|----------------------|------------------|
+| 10,000      | 5    | 0.000062              | 0.000106             | ×1.72            |
+| 1,000,000   | 5    | 0.002061              | 0.006111             | ×2.96            |
+| 10,000,000  | 5    | 0.017835              | 0.041575             | ×2.33            |
+| 100,000,000 | 5    | 0.110647              | 0.335520             | ×3.03            |
+
+#### Išvada
+`my::vector` yra apie 2-3 kartus lėtesnis už `std::vector`. Pagrindinė priežastis — `std::vector` naudoja optimizuotą atminties valdymą su `allocator` ir `placement new`, o `my::vector` naudoja paprastesnį `new T[]` metodą, kuris kiekvieną kartą perkirstant atmintį iškviečia numatytuosius konstruktorius visiems elementams. Be to, `std::vector` yra optimizuotas kompiliatoriaus lygmenyje.
+
+### Atminties perskirstymai
+
+| Konteineris | Perskirstymų skaičius |
+|-------------|----------------------|
+| std::vector |          28          |
+| my::vector  |          25          |
+
+### Programos spartos analizė su studentų klase
+### Spartos analizė: studentų duomenų apdorojimas
+
+| Įrašų skaičius | avg `std::vector` (ms) | avg `my::vector` (ms) | Santykis (my / std) |
+|----------------|------------------------|-----------------------|---------------------|
+| 100,000        | 238                    | 227                   | ×0.95               |
+| 1,000,000      | 2179                   | 2100                  | ×0.96               |
+| 10,000,000     | 24249                  | 23736                 | ×0.98               |
+
+Įdomu tai, kad `my::vector` šiuo atveju yra šiek tiek greitesnis už `std::vector`. Tai gali būti dėl to, kad `my::vector` naudoja paprastesnį atminties valdymą be papildomo `allocator`.
+
+### Google testai
+[----------] Global test environment tear-down
+[==========] 62 tests from 4 test suites ran. (0 ms total)
+[  PASSED  ] 62 tests.
