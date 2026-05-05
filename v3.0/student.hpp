@@ -36,8 +36,9 @@ private:
      * @return Mediana (double). Jei elementu skaicius lyginis, grazina dvieju viduriniu reiksmiu vidurki.
      */
     double calc_median() const;
-
+    /// Sugeneruoja atsitiktinius namu darbu pazymius ir egzamina (naudojama viduje)
     void random_grades_generator();
+    /// Sugeneruoja atsitiktini pilna varda (vardas, pavarde) is failu
     vector <string> random_name_generator();
 public:
     /**
@@ -52,8 +53,11 @@ public:
     Students(istream& is) { read_students(is); }
 
     /* Getters */
+    /// Grazina egzamino pazymi
     inline int exam() const { return exam_; }
+    /// Grazina paskaičiuota svorini vidurki (result)
     inline double result() const { return calc_result(); }
+    /// Grazina paskaičiuota medianą (median)
     inline double median() const { return calc_median(); }
 
     /**
@@ -81,9 +85,13 @@ public:
     void print() const override;
 
     // Rule of 5
+    /// Copy constructor
     Students(const Students& other); // copy constructor
+    /// Move constructor
     Students(Students&& other); // move constructor
+    /// Copy assignment operator
     Students& operator=(const Students& other); // copy assignment
+    /// Move assignment operator
     Students& operator=(Students&& other); // move assignment
     ~Students() { grade_.clear(); first_name_.clear(); last_name_.clear(); }
 };

@@ -290,19 +290,22 @@ void split_strategy_two(vector<Students>& group, vector<Students>& below_five)
 /**
  * @brief Atskyrimas naudojant partition: perkelia studentus su result()<5 i below_five.
  */
-/*
+
 void split_strategy_three(vector<Students> & group, vector<Students>& below_five)
 {
     // std::partition groups elements with predicate true first
     auto it = std::partition(group.begin(), group.end(),
         [](const Students& s) {return s.result() >= 5; });
 
+
     // copy poor-performing students to below_five and erase them from group
     below_five.assign(it, group.end());
 
-    //group.erase(it, group.end());
+    group.erase(it, group.end());
+
+
 }
-*/
+
 
 /**
  * @brief Sugeneruoja sintetinio studentu ivedimo faila su atsitiktinemis pazymemis.

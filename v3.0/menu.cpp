@@ -207,7 +207,7 @@ void split_method(vector<Students>& group, vector<Students>& above_five, vector<
     }
     else
     {
-        //split_strategy_three(group, below_five);
+        split_strategy_three(group, below_five);
         sort_output(group, sort_option);
         sort_output(below_five, sort_option);
     }

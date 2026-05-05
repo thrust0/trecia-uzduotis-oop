@@ -2,7 +2,7 @@
 
 #include <iomanip>
 #include "Vector/vector.hpp"
-#include <vector>
+//#include <vector>
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -41,7 +41,8 @@ using std::to_string;
 using std::runtime_error;
 using std::istream;
 using std::ostream;
-using std::vector;
+//using std::vector;
+using my::vector;
 
 /**
  * @brief Bazine klase zmogui (vardas ir pavarde).

@@ -76,7 +76,7 @@ void split_strategy_two(vector<Students>& group, vector<Students>& below_five);
 /**
  * @brief Atskyrimas su partition: palieka >=5 pirmiau ir pasalina likusius.
  */
-//void split_strategy_three(vector<Students> & group, vector<Students>& below_five);
+void split_strategy_three(vector<Students> & group, vector<Students>& below_five);
 
 // Student data generating functions
 /**

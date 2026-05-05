@@ -160,6 +160,7 @@ public:
     /// @return iteratorius i elementa po istrynimo
     iterator insert(iterator p, const T& val);
     iterator erase(iterator p);
+    iterator erase( iterator first, iterator last);
 
     /// Istrina visus elementus (neatlaisvina atminties)
     void clear() { size_ = 0; }                             //allocated space still belongs to the container
@@ -365,6 +366,17 @@ typename vector<T>::iterator vector<T>::erase(iterator p)
     std::move(p+1, end(), p); //move elements from p+1, until end() to p
     --size_;
     return p;
+}
+
+template<typename T>
+typename vector<T>::iterator vector<T>::erase(iterator first, iterator last)
+{
+    if(first == last) 
+        return first;
+    auto n = last - first;
+    std::move(last, end(), first);
+    size_ -= n;
+    return first;
 }
 
 template<typename T>

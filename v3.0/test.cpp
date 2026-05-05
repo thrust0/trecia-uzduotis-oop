@@ -658,28 +658,33 @@ int main(int argc, char **argv)
 {
     //testing::InitGoogleTest(&argc, argv);
     //return RUN_ALL_TESTS();
+    string file1k = "../studentInput/studentai_gen1000.txt";
     string file100k = "../studentInput/studentai_gen100000.txt";
     string file1m = "../studentInput/studentai_gen1000000.txt";
     string file10m = "../studentInput/studentai_gen10000000.txt";
     
-    cout << "std::vector spartos testai: \n ";
-    speed_test(file100k);
-    speed_test(file1m);
-    speed_test(file10m);
+    cout << "my::vector spartos testai: \n ";
+    speed_test(file1k);
 }
 
 void speed_test(string filename)
 {
-    std::vector<Students> group;
-    std::vector<Students> above_five;
-    std::vector<Students> below_five;
+    my::vector<Students> group;
+    my::vector<Students> above_five;
+    my::vector<Students> below_five;
     
     //input
     auto start = std::chrono::high_resolution_clock::now();
 
     file_input(group, filename);
     sort_output(group, 3);
-    split_students_by_grades(group, above_five, below_five);
+    split_strategy_three(group, below_five);
+    //for(int i = 0; i < group.size(); i++)
+        //cout << group.at(i) << "\n";
+
+    for(int i = 0; i < below_five.size(); i++)
+        cout << below_five.at(i) << "\n";
+
     file_output(above_five, "../studentOutput/kietiakai.txt");
 
     auto end = std::chrono::high_resolution_clock::now();
