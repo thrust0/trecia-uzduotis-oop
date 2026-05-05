@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iomanip>
+#include "Vector/vector.hpp"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -17,7 +18,7 @@
 #include <utility>
 
 
-using std::vector;
+
 using std::string;
 using std::cin;
 using std::cout;
@@ -40,6 +41,7 @@ using std::to_string;
 using std::runtime_error;
 using std::istream;
 using std::ostream;
+using std::vector;
 
 /**
  * @brief Bazine klase zmogui (vardas ir pavarde).

@@ -241,6 +241,7 @@ vector<T>::vector(const vector<T>& v)
 template<typename T>
 vector<T>& vector<T>::operator=(const vector<T>& v)
 {
+    //std::cerr << "copy assignment called\n";
     if (this==&v) return *this; //self assignment
 
     if(v.size_<= space_) //jei nereik allocatint
@@ -265,6 +266,7 @@ template <typename T>
 vector<T>::vector(vector<T>&& v)
     :size_{v.size_}, space_{v.space_}, element_{v.element_}
 {
+    v.space_ = 0;
     v.size_ = 0;
     v.element_ = nullptr;
 }
@@ -276,7 +278,9 @@ vector<T>& vector<T>::operator=(vector<T>&& v)
         delete[] element_;
         element_ = v.element_;
         size_ = v.size_;
+        space_ = v.space_;
         v.element_ = nullptr;
+        v.space_ = 0;
         v.size_ = 0;
     }
     return *this;
@@ -285,8 +289,10 @@ vector<T>& vector<T>::operator=(vector<T>&& v)
 template <typename T>
 void vector<T>::reserve(int newalloc)
 {
+    
     if (newalloc<=space_)                // never decrease allocation
         return;
+    //std::cerr << "reserve called, newalloc=" << newalloc << " size_=" << size_ << "\n";
     T* p = new T[newalloc];        // allocate new space
     for (int i=0; i<size_; ++i)            // copy old elements
         p[i] = element_[i];

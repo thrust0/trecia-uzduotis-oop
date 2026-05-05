@@ -20,7 +20,7 @@ void Students::set_random_grades()
 {
     random_grades_generator();
     
-    for(size_t i = 0; i<grade_.size(); i++)
+    for(int i = 0; i<grade_.size(); i++)
     {
         cout << "\t" << i+1 << " pazymys is " << grade_.size() << ": " << grade_[i] << "\n"; 
     }
@@ -111,7 +111,7 @@ double Students::calc_result() const
 {
     if(grade_.empty()) return 0; // handle empty case
     int sum = 0;
-    for(size_t i = 0; i < grade_.size(); i++)
+    for(int i = 0; i < grade_.size(); i++)
         sum += grade_[i];
     
     return sum * 1.0 / (grade_.size() * 1.0) * 0.4 + exam_ * 0.6;

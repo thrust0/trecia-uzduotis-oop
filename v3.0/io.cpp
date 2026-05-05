@@ -126,10 +126,13 @@ void file_input(vector<Students>& group, const string& filename)
     string line;
     getline(file, line); // skip header
 
+    //int count = 0;
     Students student;
     while(file >> student)
     {
+        //std::cerr << "Reading student " << ++count << "\n";
         group.push_back(std::move(student));
+        //std::cerr << "Size: " << group.size() << " Capacity: " << group.capacity() << "\n";
     }
 }
 
@@ -287,6 +290,7 @@ void split_strategy_two(vector<Students>& group, vector<Students>& below_five)
 /**
  * @brief Atskyrimas naudojant partition: perkelia studentus su result()<5 i below_five.
  */
+/*
 void split_strategy_three(vector<Students> & group, vector<Students>& below_five)
 {
     // std::partition groups elements with predicate true first
@@ -296,10 +300,9 @@ void split_strategy_three(vector<Students> & group, vector<Students>& below_five
     // copy poor-performing students to below_five and erase them from group
     below_five.assign(it, group.end());
 
-    group.erase(it, group.end());
+    //group.erase(it, group.end());
 }
-
-
+*/
 
 /**
  * @brief Sugeneruoja sintetinio studentu ivedimo faila su atsitiktinemis pazymemis.
@@ -405,7 +408,7 @@ int get_int(int start, int end)
 /** @brief Print a decorative separator line. */
 void print_line()
 {
-    cout << endl << "----------------------------------------------------------------------------" << endl;
+    cout << endl << "-----------------------------------------------------------------------------" << endl;
 }
 
 

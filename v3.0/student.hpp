@@ -1,12 +1,11 @@
 #pragma once
 #include "human.hpp"
-#include <vector>
 #include <string>
 #include <istream>
 #include <ostream>
 #include <iostream>
 
-using std::vector;
+
 using std::string;
 using std::istream;
 using std::ostream;

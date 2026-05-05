@@ -1,8 +1,11 @@
 #include "student.hpp"
 #include "student.hpp"
+#include "io.h"
 #include <gtest/gtest.h>
 #include "Vector/vector.hpp"
 #include <list>
+
+void speed_test(string filename);
 //
 /** Vienetiniai testai Students klasei. Kiekvienas testas tikrina viena elgsena. */
 
@@ -253,7 +256,7 @@ TEST(myVector, rangeConstructor)
 {
     std::list<int> l = {1, 2, 3};
     my::vector<int> v(l.begin(), l.end());
-    EXPECT_EQ(v.size(), l.size());
+    EXPECT_EQ(v.size(), (int)l.size());
     EXPECT_EQ(v[0], 1);
     EXPECT_EQ(v[1], 2);
     EXPECT_EQ(v[2], 3);
@@ -451,7 +454,7 @@ TEST(myVector, size)
 TEST(myVector, max_size)
 {
     my::vector<int> v;
-    EXPECT_EQ(v.max_size(), INT_MAX/sizeof(int));
+    EXPECT_EQ(v.max_size(), (int)(INT_MAX/sizeof(int)));
 }
 
 TEST(myVector, reserve)
@@ -653,6 +656,34 @@ TEST(myVector, pushBackMove)
 
 int main(int argc, char **argv)
 {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    //testing::InitGoogleTest(&argc, argv);
+    //return RUN_ALL_TESTS();
+    string file100k = "../studentInput/studentai_gen100000.txt";
+    string file1m = "../studentInput/studentai_gen1000000.txt";
+    string file10m = "../studentInput/studentai_gen10000000.txt";
+    
+    cout << "std::vector spartos testai: \n ";
+    speed_test(file100k);
+    speed_test(file1m);
+    speed_test(file10m);
+}
+
+void speed_test(string filename)
+{
+    std::vector<Students> group;
+    std::vector<Students> above_five;
+    std::vector<Students> below_five;
+    
+    //input
+    auto start = std::chrono::high_resolution_clock::now();
+
+    file_input(group, filename);
+    sort_output(group, 3);
+    split_students_by_grades(group, above_five, below_five);
+    file_output(above_five, "../studentOutput/kietiakai.txt");
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+
+    cout << filename << " laikas: " << elapsed.count() << "ms\n\n";
 }

@@ -111,7 +111,7 @@ void input_method(vector<Students>& group, int& menu_option)
         }
         else
         {
-            cout << "Nera tokio pasirinkimo!\n";
+            cout << "Nera tokio pasirinkimo! \n";
             intro_text();
         }
     }
@@ -143,7 +143,7 @@ void sort_method(vector<Students>& group, int& sort_option)
  */
 void output_method(vector<Students>& group, vector<Students>& above_five, vector<Students>& below_five, int& menu_option,int& output_option, int& split_option, int& sort_option)
 {
-    cout << "Pasirinkite kur norite, kad duomenys butu isvesti:\n\t'1'Terminale\n\t'2'Teksto faile\n\t'3' I du atskirus failus\nIveskite pasirinkima: ";
+    cout << "Pasirinkite kur norite, kad duomenys butu isvesti:\n\t'1'Terminale\n\t'2'Teksto faile\n\t'3'I du atskirus failus\nIveskite pasirinkima: ";
     output_option = get_int(1,3);
     
     if(output_option == 1 && menu_option == 4)
@@ -207,7 +207,7 @@ void split_method(vector<Students>& group, vector<Students>& above_five, vector<
     }
     else
     {
-        split_strategy_three(group, below_five);
+        //split_strategy_three(group, below_five);
         sort_output(group, sort_option);
         sort_output(below_five, sort_option);
     }
