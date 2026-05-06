@@ -653,7 +653,6 @@ Visi klasės metodai patikrinti `test.cpp` faile naudojant **Google Test** frame
 | my::vector  |          25          |
 
 ### Programos spartos analizė su studentų klase
-### Spartos analizė: studentų duomenų apdorojimas
 
 | Įrašų skaičius | avg `std::vector` (ms) | avg `my::vector` (ms) | Santykis (my / std) |
 |----------------|------------------------|-----------------------|---------------------|
