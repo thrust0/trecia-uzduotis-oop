@@ -652,6 +652,8 @@ Visi klasės metodai patikrinti `test.cpp` faile naudojant **Google Test** frame
 | std::vector |          28          |
 | my::vector  |          25          |
 
+![Test Photo](https://github.com/thrust0/trecia-uzduotis-oop/blob/v3.0/testavimas/v3.0%20testsavimas/pushbackbenchmark/Screenshot%202026-05-05%20at%2020.08.11.png)
+
 ### Programos spartos analizė su studentų klase
 
 | Įrašų skaičius | avg `std::vector` (ms) | avg `my::vector` (ms) | Santykis (my / std) |
@@ -666,3 +668,5 @@ Visi klasės metodai patikrinti `test.cpp` faile naudojant **Google Test** frame
 [----------] Global test environment tear-down
 [==========] 62 tests from 4 test suites ran. (0 ms total)
 [  PASSED  ] 62 tests.
+
+![Test Photo](https://github.com/thrust0/trecia-uzduotis-oop/blob/v3.0/testavimas/v3.0%20testsavimas/pushbackbenchmark/Screenshot%202026-05-05%20at%2020.11.39.png)
