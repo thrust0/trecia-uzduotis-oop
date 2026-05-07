@@ -10,7 +10,13 @@ kriterijų bei išvesti rezultatus į ekraną arba failus.
 kurioje `struct` struktūra pakeista į pilnavertę `class` klasę.
 
 ---
-## Įdiegimo instrukcija
+## Instaliavimo instrukcija vartototjui su setup.exe
+
+1. Paleisti `Setup2.msi`
+2. Sekti instaliavimo vedlio instrukcijas
+3. Programa bus įdiegta į `C:\Program Files\VU\Vardenis-Pavardenis`
+4. Paleisti programą per darbalaukio nuorodą arba Start meniu
+## Įdiegimo instrukcija programuotojui
 
 ### 1. Įdiekite Homebrew (Mac paketų tvarkyklė)
 Atidarykite terminalą ir įvykdykite:
